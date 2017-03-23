@@ -5,5 +5,5 @@ url = 'https://www.amazon.com/Big-Data-Revolution-Transform-Think/product-review
 book = ProductPage.get_book(url)
 print("main")
 print(book.author)
-for review in book.listCustReview:
-    print(review.author, ' : ', review.authorLink)
+# for review in book.listCustReview:
+#     print(review.author, ' : ', review.authorLink)
