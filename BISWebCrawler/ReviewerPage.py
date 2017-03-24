@@ -13,9 +13,34 @@ def get_reviewer(url,data=None):
     }
 
     wb_data = requests.get(url, headers=headers)
-    print(wb_data.status_code)
-    print(wb_data.text)
+
     time.sleep(1)
     soup = BeautifulSoup(wb_data.text,'lxml')
+    reviewer = Reviewer('AH5KNRSD6RKBCN4F7WT6TPIYEUGA');
+    name = soup.find('span', attrs = {'class':'public-name-text'}).get_text().strip();
+    locationOccupation = soup.find('div', attrs={'class' : 'a-fixed-right-grid location-and-occupation-holder'}).get_text().strip()
+
+    profile = soup.find('span',  attrs={'class': 'a-size-base location-and-bio-text'}).get_text().strip()
+    bio = soup.find('div', attrs={'class' : 'bio-expander'})
+    trace = bio.select('div > div > div')
+
+    nbHelpful = trace[2].get_text().replace(",",'').strip()
+    print()
+    rank = trace[3].find('div').find('div').get_text().replace("#","").strip()
+    print()
+    # print(trace[4].prettify())
+    print(name)
+    print(locationOccupation)
+    print(profile)
+    print(nbHelpful)
+    print(rank)
+
+    reviewer.name = name
+    reviewer.country = locationOccupation
+    reviewer.profileText = profile
+    reviewer.nbHelpfulVotes = nbHelpful
+    reviewer.rank = rank
+
+    # there is no way to check if the user uses a real profile picture only from the link
 
 get_reviewer(url);

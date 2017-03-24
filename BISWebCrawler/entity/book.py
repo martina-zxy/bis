@@ -5,6 +5,7 @@ class Book:
         self.isbn10 = isbn10
         self.isbn13 = isbn13
         self.title = title
+        self.language = ''
         self.percFiveStar = 0
         self.percFourStar = 0
         self.percThreeStar = 0
@@ -12,6 +13,7 @@ class Book:
         self.percOneStar = 0
         self.summary = ''
         self.avgCustReview = 0
+        self.publisher = ''
         self.publicationDate = ''
         self.rank = 0
         self.author = None
@@ -35,8 +37,14 @@ class Book:
         self.percTwoStar = perc2star
         self.percOneStar = perc1star
 
-#print ("Book.__doc__:", Book.__doc__)
-#print ("Book.__name__:", Book.__name__)
-#print ("Book.__module__:", Book.__module__)
-#print ("Book.__bases__:", Book.__bases__)
-#print ("Book.__dict__:", Book.__dict__)
+class Review:
+    def __init__(self, asin):
+        self.asin = asin
+        self.nbStar = ''
+        self.title = ''
+        self.date = ''
+        self.reviewerId = ''
+        self.verifiedPurchase = False
+        self.reviewText = ''
+        self.nbHelpful = 0
+        self.nbVotes = 0
