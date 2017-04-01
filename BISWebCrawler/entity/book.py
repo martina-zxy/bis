@@ -16,7 +16,7 @@ class Book:
         self.publisher = ''
         self.publicationDate = ''
         self.rank = 0
-        self.author = None
+        self.listAuthor = None
         self.listCustReview = None
         self.nbCustReview = 0
    
@@ -39,6 +39,7 @@ class Book:
 
 class Review:
     def __init__(self, asin):
+        self.id = ''
         self.asin = asin
         self.nbStar = ''
         self.title = ''
@@ -48,3 +49,4 @@ class Review:
         self.reviewText = ''
         self.nbHelpful = 0
         self.nbVotes = 0
+        self.author_link = ''

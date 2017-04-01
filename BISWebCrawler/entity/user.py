@@ -9,3 +9,10 @@ class Reviewer:
         self.profileText = ''
         self.picture = ''
 
+class Author:
+    def __init__(self, id):
+        self.id = id
+        self.name = ''
+        self.biography = ''
+        self.rank = 0
+
