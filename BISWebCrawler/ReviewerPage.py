@@ -2,6 +2,7 @@ from bs4 import BeautifulSoup
 import requests
 import time
 from entity.book import Book
+from entity.user import Author
 from entity.user import Reviewer
 import json
 
@@ -38,14 +39,38 @@ def get_reviewer(url,data=None):
         profile = data['bioData']['personalDescription'].strip().replace('\'','\'\'')
 
     nb_helpful = ''
+    nb_following = 0
+    following_url = ''
     stats = data['statsBarData']['stats']
     for stat in stats:
         if stat['name'] == 'helpful_votes':
             nb_helpful = stat['value']
+        elif stat['name'] == 'following':
+            nb_following = int(stat['value'])
+            following_url = "https://www.amazon.com" + stat['url']
 
     if 'k' in nb_helpful:
         nb_helpful = nb_helpful.replace('k','')
         nb_helpful = float(nb_helpful) * 1000
+
+    if nb_following > 0:
+        following = []
+        following_data = requests.get(following_url, headers=headers)
+        # print(following_data.text)
+        following_soup = BeautifulSoup(following_data.text,'lxml')
+        following_rows = following_soup.find_all('div', class_ = "pr-follows-row")
+        for row in following_rows:
+            author_soup = row.find('a')
+            author_name = author_soup.get('title')
+            author_link = author_soup.get('href')
+
+            str_temp_id = author_link.replace("/gp/profile/", "")
+            idx_separator = str_temp_id.find('/')
+            author_id = str_temp_id[:idx_separator]
+            author = Author(author_id)
+            author.name = author_name
+            author.link = author_link
+            following.append(author)
 
     rank = data['bioData']['topReviewerInfo']['rank'].replace(",","")
     rank = int(rank)
@@ -64,6 +89,7 @@ def get_reviewer(url,data=None):
     reviewer.profileText = profile
     reviewer.nbHelpfulVotes = nb_helpful
     reviewer.rank = rank
+    reviewer.following = following
 
     return reviewer
     # there is no way to check if the user uses a real profile picture only from the link

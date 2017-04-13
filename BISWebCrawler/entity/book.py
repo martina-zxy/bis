@@ -19,6 +19,9 @@ class Book:
         self.listAuthor = None
         self.listCustReview = None
         self.nbCustReview = 0
+        self.category = ''
+        self.listFBT = None
+        self.listAB = None
    
     def display_count(self):
         print ("Total Book %d" % Book.bookCount)
@@ -43,10 +46,23 @@ class Review:
         self.asin = asin
         self.nbStar = ''
         self.title = ''
+        self.link = ''
         self.date = ''
         self.reviewerId = ''
         self.verifiedPurchase = False
         self.reviewText = ''
         self.nbHelpful = 0
         self.nbVotes = 0
-        self.author_link = ''
+        self.nbComments = 0
+        self.reviewerLink = ''
+        self.listComment = None
+
+class Comment:
+    def __init__(self):
+        self.id = ''
+        self.reviewId = ''
+        self.commenterId = ''
+        self.commenterName = ''
+        self.commenterLink = ''
+        self.date = ''
+        self.text = ''

@@ -8,6 +8,7 @@ class Reviewer:
         self.rank = 0
         self.profileText = ''
         self.picture = ''
+        self.following = None
 
 class Author:
     def __init__(self, id):
@@ -15,4 +16,5 @@ class Author:
         self.name = ''
         self.biography = ''
         self.rank = 0
+        self.link = ''
 
