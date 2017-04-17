@@ -7,6 +7,7 @@ from entity.book import Comment
 from entity.user import Author
 import re
 from datetime import datetime
+import ReviewPage
 import json
 
 headers = {
@@ -154,7 +155,7 @@ def get_book(url, urlReview):
     list_book_review = get_review(soupReview)
     paging = soupReview.select('ul.a-pagination > li.a-last > a')
 
-    while len(paging) > 0: # and pageNb < 1:
+    while len(paging) > 0 and pageNb < 1:
         pageNb += 1
         urlTemp = urlReview + "/ref=cm_cr_getr_d_show_all?pageNumber=" + str(pageNb) + "&pageSize=10&reviewerType=all_reviews"
         # print(str(pageNb) + ":" + urlTemp)
@@ -219,9 +220,15 @@ def get_review(soup):
         date = datetime.strptime(date_text, '%B %d, %Y')
         review.date = date.strftime('%Y-%m-%d')
 
-        # helpful
+        # helpful and votes
+
         helpfulText = r.find('span', attrs={'data-hook': 'review-voting-widget'}).get_text()
+        indexOf = helpfulText.find('of')
+
         nbHelpful = helpfulText.strip().partition(' ')[0]
+        nbVotes = nbHelpful
+        if indexOf > 0:
+            nbVotes = int(helpfulText[indexOf+3:].strip().partition(' ')[0])
 
         if nbHelpful == "One":
             nbHelpful = 1
@@ -230,8 +237,7 @@ def get_review(soup):
         else:
             nbHelpful = int(nbHelpful)
         review.nbHelpful = nbHelpful
-
-        # votes??
+        review.nbVotes = nbVotes
 
         # comment
         comment_text = r.find("span", class_ = "review-comment-total").text
@@ -243,7 +249,7 @@ def get_review(soup):
             url_review = "https://www.amazon.com" + review.link
             rev_data = requests.get(url_review, headers=headers)
             soup_review = BeautifulSoup(rev_data.text, 'lxml')
-            list_comment = get_comments(soup_review)
+            list_comment = ReviewPage.get_comments(soup_review)
             for com in list_comment:
                 com.reviewId = review.id
 
@@ -253,40 +259,4 @@ def get_review(soup):
 
     return list_review
 
-
-def get_comments(soup):
-    list_comments = []
-    comments = soup.find_all("div", class_="postBody")
-    for com in comments:
-        comment = Comment()
-        header = com.find("div", class_="postHeader").text.strip()
-        idx_enter = header.find('\n')
-        cut = header[idx_enter+2:]
-
-        idx_2nd_enter = cut.find('\n')
-        if idx_2nd_enter > 0:
-            cut = cut[:idx_2nd_enter]
-        # print(cut) TODO
-        commenter = com.find("div", class_="postFrom")
-        commenter_name = commenter.text.strip().replace(" says:", "")
-        commenter_link = commenter.find('a').get('href')
-
-        str_temp_id = commenter_link.replace("https://www.amazon.com/gp/pdp/profile/","")
-        idx_separator = str_temp_id.find('/')
-        commenter_id = str_temp_id[:idx_separator]
-
-        content = com.find("div", class_="postContent")
-        content_text = content.text.strip()
-        comment_id = content.get('id').replace("cdPostContentBox_", "")
-        comment.date = cut
-        comment.commenterName = commenter_name
-        comment.commenterLink = commenter_link
-        comment.commenterId = commenter_id
-        comment.id = comment_id
-        comment.text = content_text
-
-        list_comments.append(comment)
-    # print()
-    return list_comments
-
-#get_book("https://www.amazon.com/Big-Data-Revolution-Transform-Think/dp/0544227751","https://www.amazon.com/Big-Data-Revolution-Transform-Think/product-reviews/0544227751");
+get_book("https://www.amazon.com/Big-Data-Revolution-Transform-Think/dp/0544227751","https://www.amazon.com/Big-Data-Revolution-Transform-Think/product-reviews/0544227751");

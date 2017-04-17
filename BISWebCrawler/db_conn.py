@@ -12,21 +12,55 @@ cnxn = pyodbc.connect('DRIVER={SQL Server};SERVER=10.195.25.10,54767;DATABASE=Am
 cursor = cnxn.cursor()
 
 def insert_reviewer(reviewer):
-    query = "INSERT INTO Reviewer VALUES(\'" + reviewer.id + "\',\'" + reviewer.name + "\',\'" + reviewer.country + "\'," + str(reviewer.nbHelpfulVotes) + "," + str(reviewer.rank) + ",\'" + reviewer.profileText + "\',0)" #TODO
+    query = "INSERT INTO Reviewer VALUES(?,?,?,?,?,?,0)"
+    # query = "INSERT INTO Reviewer VALUES(\'" + reviewer.id + "\',\'" + reviewer.name + "\',\'" + reviewer.country + "\'," + str(reviewer.nbHelpfulVotes) + "," + str(reviewer.rank) + ",\'" + reviewer.profileText + "\',0)" #TODO
     print(query)
-    cursor.execute(query)
+    cursor.execute(query, (reviewer.id,
+                           reviewer.name,
+                           reviewer.country,
+                           str(reviewer.nbHelpfulVotes),
+                           str(reviewer.rank),
+                           reviewer.profileText))
     cnxn.commit()
 
 def insert_book(book):
-    query = "INSERT INTO Book VALUES(\'" + book.asin + "\',\'" + book.isbn10 + "\',\'" + book.isbn13 + "\',\'" + book.title + "\',\'" + book.summary + "\',\'" + book.language + "\'," + str(book.avgCustReview) + "," + str(book.nbCustReview) + "," + str(book.percFiveStar) + "," + str(book.percFourStar) + "," + str(book.percThreeStar) + "," + str(book.percTwoStar) + "," + str(book.percOneStar) + ",\'" + "0" + "\'," + str(book.rank) + ",\'" + book.publisher + "\',\'" + book.publicationDate +"\')"
+    query = "INSERT INTO Book VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,\'0\',?,?,?)"
+    # query = "INSERT INTO Book VALUES(\'" + book.asin + "\',\'" + book.isbn10 + "\',\'" + book.isbn13 + "\',\'" + book.title + "\',\'" + book.summary + "\',\'" + book.language + "\'," + str(book.avgCustReview) + "," + str(book.nbCustReview) + "," + str(book.percFiveStar) + "," + str(book.percFourStar) + "," + str(book.percThreeStar) + "," + str(book.percTwoStar) + "," + str(book.percOneStar) + ",\'" + "0" + "\'," + str(book.rank) + ",\'" + book.publisher + "\',\'" + book.publicationDate +"\')"
     print(query)
-    cursor.execute(query)
+    cursor.execute(query, (book.asin,
+                           book.isbn10,
+                           book.isbn13,
+                           book.title,
+                           book.summary,
+                           book.language,
+                           str(book.avgCustReview),
+                           str(book.nbCustReview),
+                           str(book.percFiveStar),
+                           str(book.percFourStar),
+                           str(book.percThreeStar),
+                           str(book.percTwoStar),
+                           str(book.percOneStar),
+                           str(book.rank),
+                           book.publisher,
+                           book.publicationDate))
     cnxn.commit()
 
 def insert_review(review):
-    query = "INSERT INTO CustomerReview (CustomerReviewID, ASIN, NbStar, ReviewTitle, ReviewDate, ReviewerID, VerifiedPurchase, ReviewText, NbHelpful, NbVotes) VALUES(\'" + review.id + "\',\'" + review.asin + "\',\'" + str(int(review.nbStar)) + "\',\'" + review.title + "\','" + review.date + "','" + review.reviewerId + "'," + str(int(review.verifiedPurchase)) + ",'" + review.reviewText + "'," + str(review.nbHelpful) + "," + str(review.nbVotes) + ")" #TODO
+    # query = "INSERT INTO CustomerReview (CustomerReviewID, ASIN, NbStar, ReviewTitle, ReviewDate, ReviewerID, VerifiedPurchase, ReviewText, NbHelpful, NbVotes) " \
+    #         "VALUES(\'" + review.id + "\',\'" + review.asin + "\',\'" + str(int(review.nbStar)) + "\',\'" + review.title + "\','" + review.date + "','" + review.reviewerId + "'," + str(int(review.verifiedPurchase)) + ",'" + review.reviewText + "'," + str(review.nbHelpful) + "," + str(review.nbVotes) + ")" #TODO
+    query = "INSERT INTO CustomerReview (CustomerReviewID, ASIN, NbStar, ReviewTitle, ReviewDate, ReviewerID, VerifiedPurchase, ReviewText, NbHelpful, NbVotes) " \
+            "VALUES(?,?,?,?,?,?,?,?,?,?)"
     print(query)
-    cursor.execute(query)
+    cursor.execute(query,(review.id,
+                          review.asin,
+                          str(int(review.nbStar)),
+                          review.title,
+                          review.date,
+                          review.reviewerId,
+                          str(int(review.verifiedPurchase)),
+                          review.reviewText,
+                          str(review.nbHelpful),
+                          str(review.nbVotes)  ))
     cnxn.commit()
 
 def check_reviewer(reviewer_id):
