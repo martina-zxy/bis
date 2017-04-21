@@ -17,4 +17,7 @@ class Author:
         self.biography = ''
         self.rank = 0
         self.link = ''
+        self.is_registered = 0
+        self.type = ''
+
 

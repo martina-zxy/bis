@@ -1,13 +1,7 @@
 from bs4 import BeautifulSoup
 import requests
-import json
-import time
-from entity.book import Book
-from entity.book import Review
-from entity.book import Comment
-from entity.user import Author
-import re
-from datetime import datetime
+from entity.book import BestSeller
+import db_conn
 import json
 
 headers = {
@@ -20,24 +14,52 @@ headers = {
 
 
 def get_best_seller_list(soup):
+    list_best_seller = []
     list_book = []
     containerDiv = soup.find('div', id = "zg_col1" )
     books = containerDiv.find_all("div", class_="p13n-asin")
     for book in books:
+        # print(book.prettify())
+
         metadata = book.get("data-p13n-asin-metadata")
         metadata = json.loads(metadata)
         asin = metadata['asin']
-        link = "https://www.amazon.com" + book.find('a').get('href')
-        print(asin, link)
+        href = book.find('a').get('href')
+        idx_stop = href.find("/ref=zg_bs")
+        href = href[:idx_stop]
+
+        link = "https://www.amazon.com" + href
+        link_review = "https://www.amazon.com/product-reviews/" + asin
+
+        detail = book.find('div', class_="a-icon-row")
+        review_nb = 0
+        if detail is not None :
+            review = detail.find('a', class_= "a-size-small")
+            # link_review = "https://www.amazon.com/product-reviews/" + asin # + review.get('href')
+            review_nb = review.text.replace(",","")
+
+        book = BestSeller()
+        book.asin = asin
+        book.link = link
+        book.reviewNb = review_nb
+        list_best_seller.append(book)
+    return list_best_seller
 
 # list_comment = []
 page = 1
+list_best_seller = []
 for page in range(1,6):
-    url_best = "https://www.amazon.com/Best-Sellers-Books-Teen-Young-Adult-Family-Fiction/zgbs/books/10368555011/ref=zg_bs_pg_" +str(page)+ "?_encoding=UTF8&amp;pg=" + str(page)
+    print("Page :", page)
+    url_best = "https://www.amazon.com/Best-Sellers-Books-Teen-Young-Adult-Family-Fiction/zgbs/books/10368555011/ref=zg_bs_pg_" +str(page)+ "?_encoding=UTF8&pg=" + str(page)
     rev_data = requests.get(url_best, headers=headers)
     soup_review = BeautifulSoup(rev_data.text, 'lxml')
     # print(rev_data.text)
-    list_book = get_best_seller_list(soup_review)
+    list_best_seller.extend(get_best_seller_list(soup_review))
+
+for bs in list_best_seller :
+    print(bs.asin, bs.link, bs.reviewNb)
+    db_conn.insert_best_seller(bs)
+
 # for com in list_comment:
 #     print("====================")
 #     print(com.id)

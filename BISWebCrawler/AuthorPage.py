@@ -9,20 +9,20 @@ import json
 url = 'https://www.amazon.com/J.K.-Rowling/e/B000AP9A6K/ref=dp_byline_cont_book_1'
 
 def get_author(url,data=None):
+    print("Author page")
     #max page size = 50
     headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.110 Safari/537.36',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246',
         'Connection': 'keep-alive',
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'
     }
-
+    result = {}
     wb_data = requests.get(url, headers=headers)
-    print(wb_data.text)
     time.sleep(1)
     soup = BeautifulSoup(wb_data.text,'lxml')
     summaryDiv = soup.find(id='ap-bio')
     summarySpan = summaryDiv.find('span').get_text().strip()
-    print(summarySpan)
+    result['biography'] = summarySpan
 
     # rank
     rank = 0
@@ -32,7 +32,8 @@ def get_author(url,data=None):
         indexStart = rank.find('#')
         indexEnd = rank.find('Overall', indexStart)
         rank = rank[indexStart + 1:indexEnd].strip()
-
+    result['rank'] = rank
+    return result
     # body = soup.select('.body');
     # data_raw = body[0].find('div')._attr_value_as_string('data');
     # data = json.loads(data_raw)
@@ -106,5 +107,5 @@ def get_author(url,data=None):
     # return reviewer
     # there is no way to check if the user uses a real profile picture only from the link
 
-print(sys.version)
+# print(sys.version)
 # get_author(url);

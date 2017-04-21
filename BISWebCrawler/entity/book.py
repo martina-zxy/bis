@@ -49,6 +49,7 @@ class Review:
         self.link = ''
         self.date = ''
         self.reviewerId = ''
+        self.reviewerName = ''
         self.verifiedPurchase = False
         self.reviewText = ''
         self.nbHelpful = 0
@@ -66,3 +67,9 @@ class Comment:
         self.commenterLink = ''
         self.date = ''
         self.text = ''
+
+class BestSeller:
+    def __init__(self):
+        self.asin = ''
+        self.link = ''
+        self.reviewNb = 0
