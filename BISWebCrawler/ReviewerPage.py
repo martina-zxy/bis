@@ -7,13 +7,16 @@ from entity.user import Reviewer
 import json
 import sys
 
-url = 'https://www.amazon.com/gp/pdp/profile/AVC8ZAFPYOHZL/'
+url = 'https://www.amazon.com/gp/pdp/profile/A22E3TNWVXU7Q0/ref=cm_cr_dp_d_pdp?ie=UTF8'
+
 
 
 def get_reviewer(url):
     #max page size = 50
     headers = {
-        'User-Agent': 'Mozilla/5.0 (iPad; U; CPU OS 3_2_1 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Mobile/7B405',
+        'User-Agent': 'Mozilla/5.0 (Windows; U; Win98; en-US; rv:1.8.1.8pre) Gecko/20070928 Firefox/2.0.0.7 Navigator/9.0RC1',
+        # 'User-Agent': 'Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US) AppleWebKit/533+ (KHTML, like Gecko) Element Browser 5.0',
+        # 'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; AS; rv:11.0) like Gecko',
         'Connection': 'keep-alive',
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'
     }
@@ -21,12 +24,12 @@ def get_reviewer(url):
     idx_start_reviewer_id = url.find('profile/')
     str_url_temp = url[idx_start_reviewer_id + 8 : ]
     idx_end_reviewer_id = str_url_temp.find('/')
-    url = url[:idx_start_reviewer_id + 8 + idx_end_reviewer_id]
-    # print(url)
+    url = url[:idx_start_reviewer_id + 8 + idx_end_reviewer_id + 1]
+    print(url)
     # sys.exit()
 
     wb_data = requests.get(url, headers=headers)
-    print(wb_data.status_code)
+    print(wb_data.text)
     if wb_data.status_code != 200:
         return None
     # print(wb_data.text)
@@ -38,7 +41,7 @@ def get_reviewer(url):
         print(soup.prettify())
     data_raw = body[0].find('div')._attr_value_as_string('data');
     data = json.loads(data_raw)
-    print(data)
+    # print(data)
     id = data['customerId']
     name = data['nameHeaderData']['name'].strip().replace('\'','\'\'')
 

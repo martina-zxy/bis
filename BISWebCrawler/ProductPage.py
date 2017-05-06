@@ -13,7 +13,8 @@ import AuthorPage
 import json
 
 headers = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246',
+    'User-Agent': 'Mozilla/5.0 (Windows; U; Win98; en-US; rv:1.8.1.8pre) Gecko/20070928 Firefox/2.0.0.7 Navigator/9.0RC1',
+    # 'User-Agent': 'Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US) AppleWebKit/533+ (KHTML, like Gecko) Element Browser 5.0',
     'Connection': 'keep-alive',
     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'
     # 'Cookie': 'aws-target-static-id=1489245108811-141740; aws-session-id=156-4065030-0477716; aws-session-id-time=2119965116l; __utmz=194891197.1489245117.1.1.utmccn=(referral)|utmcsr=portal.aws.amazon.com|utmcct=/billing/signup|utmcmd=referral; aws-business-metrics-last-visit=1489245154635; at-main=Atza|IwEBIHSbBpLorVVuewZnDIZ0aHAk7gCjO2MNrL_J0eKo1qjt5DImSZ1_e_SJzVA_IJUDqji7LqPj2QtmhVOOui63_MB1hXEvhCBo_NXJQJo2bjeqNb1AahoT_NHMoYKjcBegQtVk3df93HT6erZC_2MQ-yzCm0ILv4FSG2qwV2Ph-OQu_HxmBrjE_DiQWI2RQbsX_FGoO0dbcAhN4mflXKDm8AnH802H69kesHfnObykuAoDEUA-Xp8wrYfoe6DPVF6K-UAWg57VNa0z6co0SpM-hdDaNgmZmYKmms7lfjI0YR2WvZM38F_kMZJblOUDcFiQxVXr0Zw2nFb2W9WtN03I20vpbOz7t28VcE90lMRByJn4KrkVLN6lIcFttmI-KxsrRn7bzxlC6TSFT7mAt-B2VoGT; s_pers=%20s_nr%3D1489246399697-New%7C1497022399697%3B; aws-ubid-main=167-8061496-9307626; aws-session-token="B9IKQJ8DgUo7/RD2wFnPePkChgBfKfp88Wxi/aDugtCQs5uTOlAOyqi+LZwLd5dUtnEDP4/UQ7z1o8rmZeSUmTfZVP4Mmd4dYi0sCWkE8zcK1WCQrmBN/La/ksYjiKiuHpZVvMzLmCMYdvc6Tk30TKTlUAs037A5lVrzNDRI+70WNZTY3NQ6lsNvm8cnXSeFbEQ8igrlXtTSsnQ2tcMHUl4Tlmcsp9oWvv+LM1/WHig="; aws-x-main="3BFjf4BvmfbKgpC@K9kqtJymppleuwmKu8VShIWyYpTAtxDHO7weD@zO7k6LqI?7"; aws-at-main=Atza|IwEBIFsxs2wPNih_InYAqlUSIciX6jd1SZi9OixDqjB-SFIQb8ZJY10bUp7fDfPFKoUSAhObKoP6Y_5fB_EZvtaunqx2AQdEUXfpZo0Pzdsb2YhC6rTC2mxqP4qMerJmXIQOKX3r7xCSMHluM6QuRUwV11RsjzSLWKjxe_Ge_5oFbFroqtPE30xihw5lQ80OhSIXmU7UPVaaPstEw2MQVMtYs7yBB-dlvCSCqoYQ4PcxBKlE_WaGJFx3ZhaYbnhqZoYzgkXd3lseiaJeAPHbVweuToaaODZOeECu2ntopN1ha6IJerGA-xOo5ViU9-0Hwwwgz--t7GGxd3zYXe8TTNssSvjbU64KAQU43ZFLxhn3rhizuS6KA93puWqms7uLo6PIXPmosy96w4k-fZIF3z8TmpzCEGrL_-Cwn55uG8EtuUbzWg; aws-userInfo=%7B%22arn%22%3A%22arn%3Aaws%3Aiam%3A%3A239407844960%3Aroot%22%2C%22alias%22%3A%22%22%2C%22username%22%3A%22Martina%2520Megasari%22%2C%22keybase%22%3A%22t%2FiDMMp5mH2FCW%2FyDfZPVxwchhtfw72RhtpTSPoJIZA%5Cu003d%22%2C%22issuer%22%3A%22https%3A%2F%2Fwww.amazon.com%2Fap%2Fsignin%22%7D; __utmv=194891197.%223BFjf4BvmfbKgpC%40K9kqtJymppleuwmKu8VShIWyYpTAtxDHO7weD%40zO7k6LqI%3F7%22; __utma=194891197.1182645527.1489245117.1489245117.1489247733.2; x-wl-uid=1DjBuj9VVmpXjGXmdVkEVcHODuJdefI1T6L1UYP0qk9ui9jMqvuhPBZYvelUO0eCOJm7EasnyE1iwf994H9TTjui//aV3zczmiFb9d6bnm8xySZorrwLxO6+uc/IeB/2fcdUkc/JOpTs=; aws-target-visitor-id=1489245108821-964344.26_9; aws-target-data=%7B%22support%22%3A%221%22%7D; s_fid=36C1E738A6DD20A0-302516AC101FAA34; s_vn=1520780379735%26vn%3D3; regStatus=registered; x-main="FNIGhPmbd0oaxCBt6X6pgyCZNN?Fq6AbWBNeE96SR90SM1y5eLGly05t3Vv5w6VE"; lc-main=en_US; UserPref=XXUPcxa+FV+O7fDvfvVUk3uLGYKO86S924fjnBybPlUXwKJuRPi+Dk0QzrRdHj2HZRo+vp0j/s3coZaepgCwUs9z8XIK7NyUXzL/USVhYrRBZxbKGYfBinDQ45Yo8zrV65O6hhCYUtTKjEU16oizGH8ekTlXxfIA17xrB+ajg7nt9O2BWpwc1kN1JXGJQVHmG0zYHAr5yBnADKxNhzOJnii2q+s+CLudTTyAMp+aCW3gtfa1Fpb5x58EVv3sgqunUqPbhdleFbLDkssd31OMlQ9ex04sO0ISsqPmDLY4S2AGSGev4VpPgoL7yTNd1ePtaLbgZx9pMPEJQ9YILn5QAWpjTM5y46hN4PFiG6EZ3MJk8I3NKs3AJVsEeCBpI3v7QMnMRrlI4Yhc7PWIE2dShcg5vjaWjA3Zo1Htugxj71gcUJRysR01b4ChVQkfaNrm; s_vnum=1922455017278%26vn%3D2; s_cc=true; s_nr=1490898077684-Repeat; s_dslv=1490898077687; s_sq=%5B%5BB%5D%5D; s_ppv=63; session-token="MCnZ7mg+vJHITDmnIEQ+5YgjVXOa/ziJ/RfaPXE13HfZlWpJu9LXslKZ099AsKQvO9iAh42xRKq7twXk939hwB8KSwSNw4VP1nRPGmihzMqymXpO2p2HeSBzuOQuL3OAZI7sk8seog7obynJJkCZD8mB/ShoZxr3DvhHQTXcZQHBaaQVL0vNQhYUpLWCszjN6MkHAlp/stsH012cKzgTqun3q01/YJqqTaqr9j3wvmUlv0jh3YAZ3ni6sSG43T4WL7wFxJPQRKnGDyomK7C3/Q=="; ubid-main=154-3030463-1341322; session-id-time=2082787201l; session-id=152-8165811-0496857; csm-hit=M9G564RTVHW5NNVVZEWW+s-M9G564RTVHW5NNVVZEWW|1490941393593'
@@ -25,7 +26,7 @@ def get_book(asin, url, urlReview):
 
     # time.sleep(1)
     soup = BeautifulSoup(wb_data.text,'lxml')
-    # print(soup.prettify())
+    print(soup.prettify())
     # parse book data: title
     booktitles=soup.select('div > div.a-fixed-left-grid-col.a-col-right > div > div > div.a-fixed-left-grid-col.product-info.a-col-right > div.a-row.product-title > h1 > a')
     # print(booktitles.prettify())
@@ -207,7 +208,7 @@ def get_book(asin, url, urlReview):
 
     # time.sleep(1)
     soupReview = BeautifulSoup(wb_data_review.text, 'lxml')
-
+    # print(soupReview.prettify())
     # parse book data: review
     list_book_review = get_review(soupReview,asin)
     # print(soupReview.prettify())
@@ -256,9 +257,15 @@ def get_review(soup,asin):
         review.nbStar = float(star.partition(' ')[0])
 
         # author and author link
-        dom_author = r.find('a', attrs = {'data-hook':'review-author'})
+        x = r.find('span', attrs = {'data-hook':'review-author'})
+        if x is None:
+            continue
+        # print(x.prettify())
+        dom_author = x.find('a', attrs = {'data-hook':'review-author'})
         author_link = dom_author.get('href')
+
         author = dom_author.get_text();
+
         review.reviewerId = author_link.split('/')[4]
         review.reviewerLink = "https://www.amazon.com" + author_link
         review.reviewerName = author
@@ -335,7 +342,7 @@ def get_review(soup,asin):
 # url_review = "https://www.amazon.com/product-reviews/B06XQCKG2Z"
 # get_book(asin, url,url_review);
 
-# asin = '059035342X'
-# url = "https://www.amazon.com/Harry-Potter-Sorcerers-Stone-Rowling/dp/059035342X/ref=zg_bs_10368555011_3?_encoding=UTF8&psc=1&refRID=F5CM5FW3AZDS0D5H5WKV"
-# url_review = "https://www.amazon.com/product-reviews/059035342X"
+# asin = 'B00HYGRVRI'
+# url = "https://www.amazon.com/Life-Walter-Boys-Ali-Novak-ebook/dp/B00HYGRVRI"
+# url_review = "https://www.amazon.com/product-reviews/B00HYGRVRI"
 # get_book(asin, url,url_review);

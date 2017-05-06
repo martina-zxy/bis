@@ -22,7 +22,7 @@ url_review = "https://www.amazon.com/product-reviews/B06XQCKG2Z"
 # url = "https://www.amazon.com/Predictive-Analytics-Power-Predict-Click/dp/1119145678/ref=pd_bxgy_14_img_2?_encoding=UTF8&pd_rd_i=1119145678&pd_rd_r=P51PE6AD1F082RZAJRD2&pd_rd_w=7bgmR&pd_rd_wg=lfK5P&psc=1&refRID=P51PE6AD1F082RZAJRD2"
 # url_review = "https://www.amazon.com/product-reviews/1119145678"
 
-books_to_crawl = db_conn.get_best_seller_to_crawl(1)
+books_to_crawl = db_conn.get_best_seller_to_crawl(4)
 for book_data in books_to_crawl:
     print(book_data[0], book_data[1], book_data[3])
 
@@ -122,7 +122,7 @@ for book_data in books_to_crawl:
             if db_conn.check_reviewer(review.reviewerId):
                 continue
 
-            time.sleep(10)
+            time.sleep(5)
 
             reviewer = ReviewerPage.get_reviewer(review.reviewerLink)
             if reviewer is not None:

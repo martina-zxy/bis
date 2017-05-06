@@ -3,8 +3,6 @@ from bs4 import BeautifulSoup
 import os
 import csv
 import pyodbc
-import ReviewerPage
-import ProductPage
 from entity.user import Reviewer
 from entity.book import Book
 
@@ -358,3 +356,17 @@ def update_author_crawled(authorid):
     print(query)
     cursor.execute(query)
     cnxn.commit()
+
+def getAllReviews():
+    query = "select * from CustomerReview"
+    print(query)
+    cursor.execute(query)
+    rows = cursor.fetchall()
+    return rows
+
+def getAllReviewers():
+    query = "select * from Reviewer"
+    print(query)
+    cursor.execute(query)
+    rows = cursor.fetchall()
+    return rows
