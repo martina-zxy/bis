@@ -1,6 +1,17 @@
+package edu.ufrt.bis;
+
+import java.io.File;
+import java.io.IOException;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
+
+import org.languagetool.*;
+import org.languagetool.language.BritishEnglish;
+import org.languagetool.language.English;
+import org.languagetool.rules.Rule;
+import org.languagetool.rules.RuleMatch;
 
 public class Review {
 	
@@ -28,6 +39,9 @@ public class Review {
 	
 	double reviewTextARI = 0.0;
 	double summaryARI = 0.0;
+	
+	int reviewTextSpellingError = 0;
+	int summarySpellingError = 0;
 	
 	public Review(){
 		
@@ -94,6 +108,22 @@ public class Review {
 			this.unixReviewTime = rs.getInt("unixReviewTime");
 			this.reviewTime = rs.getString("reviewTime");
 			this.reviewDate = rs.getDate("reviewDate");
+			
+			//reset derived variable
+			this.reviewTextLength = 0;
+			this.summaryLength = 0;
+			
+			this.reviewTextSentences = null;
+			this.summarySentences = null;
+			
+			this.reviewTextWords = null;
+			this.summaryWords = null;
+			
+			this.reviewTextARI = 0.0;
+			this.summaryARI = 0.0;
+			
+			this.reviewTextSpellingError = 0;
+			this.summarySpellingError = 0;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -105,6 +135,7 @@ public class Review {
 	public void calculateMetrics(){
 		calculateLength();
 		calculateReadability();
+		calculateSpellingError();
 	}
 	
 	private void calculateLength(){
@@ -173,4 +204,48 @@ public class Review {
 //		System.out.println("summaryARI: " + summaryARI);
 	}
 	
+	private void calculateSpellingError(){
+		try {
+			JLanguageTool langTool;
+			langTool = new JLanguageTool(new BritishEnglish());
+//			for (Rule rule : langTool.getAllRules()) {
+//			  if (!rule.isDictionaryBasedSpellingRule()) {
+//			    langTool.disableRule(rule.getId());
+//			  }
+//			}
+			
+			List<RuleMatch> matches;
+			
+			matches = langTool.check(reviewText);
+			
+			for (RuleMatch match : matches) {
+			  System.out.println("Potential typo at characters " +
+			      match.getFromPos() + "-" + match.getToPos() + ": " +
+			      match.getMessage());
+			  System.out.println("Suggested correction(s): " +
+			      match.getSuggestedReplacements());
+			  this.reviewTextSpellingError++;
+			}
+			
+			System.out.println("reviewTextSpellingError: " + reviewTextSpellingError);
+			
+			matches = langTool.check(summary);
+			
+			for (RuleMatch match : matches) {
+			  System.out.println("Potential typo at characters " +
+			      match.getFromPos() + "-" + match.getToPos() + ": " +
+			      match.getMessage());
+			  System.out.println("Suggested correction(s): " +
+			      match.getSuggestedReplacements());
+			  this.summarySpellingError++;
+			}
+			
+			System.out.println("summarySpellingError: " + summarySpellingError);
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
 }
