@@ -20,25 +20,34 @@ public class Review {
 	int reviewTextLength;
 	int summaryLength;
 	
+	String[] reviewTextSentences;
+	String[] summarySentences;
+	
+	String[] reviewTextWords;
+	String[] summaryWords;
+	
+	double reviewTextARI = 0.0;
+	double summaryARI = 0.0;
+	
 	public Review(){
 		
 	}
 	
 	public String toString() {
 		return  "Database Variables" + "\n" +
-				"    reviewerID: " + reviewerID + "\n" +
-				"    asin: " + asin + "\n" +
-				"    reviewerName: " + reviewerName + "\n" +
-				"    helpful: " + "[" + helpful[0] + "," + helpful[1] + "]" + "\n" +
+//				"    reviewerID: " + reviewerID + "\n" +
+//				"    asin: " + asin + "\n" +
+//				"    reviewerName: " + reviewerName + "\n" +
+//				"    helpful: " + "[" + helpful[0] + "," + helpful[1] + "]" + "\n" +
 				"    reviewText: " + reviewText + "\n" +
-				"    overall: " + overall + "\n" +
+//				"    overall: " + overall + "\n" +
 				"    summary: " + summary + "\n" +
-				"    unixReviewTime: " + unixReviewTime + "\n" +
-				"    reviewTime: " + reviewTime + "\n" +
-				"    reviewDate: " + reviewDate + "\n" +
+//				"    unixReviewTime: " + unixReviewTime + "\n" +
+//				"    reviewTime: " + reviewTime + "\n" +
+//				"    reviewDate: " + reviewDate + "\n" +
 				"Derived Variables" + "\n" +
 				"    reviewTextLength: " + reviewTextLength + "\n" +
-				"    summaryLength: " + summaryLength + "\n"
+				"    summaryLength: " + summaryLength + "\n" 
 				;
 	}
 	
@@ -95,11 +104,73 @@ public class Review {
 	
 	public void calculateMetrics(){
 		calculateLength();
+		calculateReadability();
 	}
 	
 	private void calculateLength(){
 		this.reviewTextLength = reviewText.length();
 		this.summaryLength = summary.length();
+	}
+	
+	private void calculateReadability(){
+		
+		this.reviewTextSentences = reviewText.split("[!?\\.]+");
+		this.summarySentences = summary.split("[!?\\.]+");
+		
+//		System.out.println("reviewTextSentence:");
+//		for(String s : reviewTextSentences)
+//			System.out.println(s);
+//		
+//		System.out.println("summarySentence:");
+//		for(String s : summarySentences)
+//			System.out.println(s);
+//		
+		this.reviewTextWords = reviewText.split("[&\"?!;,\\s\\.]+");
+		this.summaryWords = summary.split("[&\"?!;,\\s\\.]+");
+		
+//		System.out.println("reviewTextWord:");
+//		for(String s : reviewTextWords)
+//			System.out.println(s);
+//		
+//		System.out.println("summaryWord:");
+//		for(String s : summaryWords)
+//			System.out.println(s);
+		
+		// automated readability index formula
+		// 4.71 (characters / words) + 0.5 (words / sentences) - 21.43
+		// where:
+		// characters is the number of letters and numbers
+		// words is the number of spaces
+		// sentences is the number of sentences
+		
+		int reviewTextCharactersScore = 0;
+		for(String s : reviewTextWords){
+			reviewTextCharactersScore += s.length();
+		}
+		int reviewTextWordsScore = reviewTextWords.length;
+		int reviewTextSentencesScore = reviewTextSentences.length;
+		
+		int summaryCharactersScore = 0;
+		for(String s : summaryWords){
+			summaryCharactersScore += s.length();
+		}
+		int summaryWordsScore = summaryWords.length;
+		int summarySentencesScore = summarySentences.length;
+		
+//		System.out.println("summaryCharactersScore: " + summaryCharactersScore);
+//		System.out.println("summaryWordsScore: " + summaryWordsScore);
+//		System.out.println("summarySentencesScore: " + summarySentencesScore);
+		
+		this.reviewTextARI = (4.71 * ((double)reviewTextCharactersScore / (double)reviewTextWordsScore)) 
+							 + (0.5 * ((double)reviewTextWordsScore / (double)reviewTextSentencesScore)) 
+							 - 21.43;
+		
+		this.summaryARI = (4.71 * ((double)summaryCharactersScore / (double)summaryWordsScore)) 
+				 + (0.5 * ((double)summaryWordsScore / (double)summarySentencesScore)) 
+				 - 21.43;
+		
+//		System.out.println("reviewTextARI: " + reviewTextARI);
+//		System.out.println("summaryARI: " + summaryARI);
 	}
 	
 }

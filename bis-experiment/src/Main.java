@@ -36,8 +36,8 @@ public class Main {
 			
 			while(rs.next()){
 				review.parseFromSQL(rs);
-				review.calculateMetrics();
 				System.out.println(review.toString());
+				review.calculateMetrics();
 			}
 			
 			
