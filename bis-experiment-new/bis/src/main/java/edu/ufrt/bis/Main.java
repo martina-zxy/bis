@@ -32,7 +32,7 @@ public class Main {
 			System.out.println("Connection OK\n");
 			Statement st = dbConn.createStatement(); 
 			
-			String query = "select top 2 * from [AmazonReviewData].[dbo].[ReviewDataFiltered]";
+			String query = "select top 5 * from [AmazonReviewData].[dbo].[ReviewDataFiltered]";
 			ResultSet rs = st.executeQuery(query);
 			Review review = new Review();
 			
