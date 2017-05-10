@@ -37,11 +37,22 @@ public class Review {
 	String[] reviewTextWords;
 	String[] summaryWords;
 	
+	int[] reviewTextWordsNbSyllables;
+	int reviewTextWordsNbSyllablesLen;
+	int[] summaryWordsNbSyllables;
+	int summaryWordsNbSyllablesLen;
+	
+	int reviewTextNbComplexWords;
+	int summaryNbComplexWords;
+	
 	double reviewTextARI = 0.0;
 	double summaryARI = 0.0;
 	
 	int reviewTextSpellingError = 0;
 	int summarySpellingError = 0;
+	
+	double reviewTextFOG = 0.0;
+	double summaryFOG = 0.0;
 	
 	public Review(){
 		
@@ -119,11 +130,22 @@ public class Review {
 			this.reviewTextWords = null;
 			this.summaryWords = null;
 			
+			this.reviewTextWordsNbSyllables = null;
+			this.reviewTextWordsNbSyllablesLen = 0;
+			this.summaryWordsNbSyllables = null;
+			this.summaryWordsNbSyllablesLen = 0;
+			
+			this.reviewTextNbComplexWords = 0;
+			this.summaryNbComplexWords = 0;
+			
 			this.reviewTextARI = 0.0;
 			this.summaryARI = 0.0;
 			
 			this.reviewTextSpellingError = 0;
 			this.summarySpellingError = 0;
+			
+			this.reviewTextFOG = 0.0;
+			this.summaryFOG = 0.0;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -134,8 +156,11 @@ public class Review {
 	
 	public void calculateMetrics(){
 		calculateLength();
-		calculateReadability();
+		calculateARI();
 		calculateSpellingError();
+		calculateSyllable();
+		calculateComplexWords();
+		calculateFOG();
 	}
 	
 	private void calculateLength(){
@@ -143,7 +168,7 @@ public class Review {
 		this.summaryLength = summary.length();
 	}
 	
-	private void calculateReadability(){
+	private void calculateARI(){
 		
 		this.reviewTextSentences = reviewText.split("[!?\\.]+");
 		this.summarySentences = summary.split("[!?\\.]+");
@@ -200,52 +225,112 @@ public class Review {
 				 + (0.5 * ((double)summaryWordsScore / (double)summarySentencesScore)) 
 				 - 21.43;
 		
-//		System.out.println("reviewTextARI: " + reviewTextARI);
-//		System.out.println("summaryARI: " + summaryARI);
+		System.out.println("reviewTextARI: " + reviewTextARI);
+		System.out.println("summaryARI: " + summaryARI);
 	}
 	
 	private void calculateSpellingError(){
 		try {
 			JLanguageTool langTool;
 			langTool = new JLanguageTool(new BritishEnglish());
-//			for (Rule rule : langTool.getAllRules()) {
-//			  if (!rule.isDictionaryBasedSpellingRule()) {
-//			    langTool.disableRule(rule.getId());
-//			  }
-//			}
 			
 			List<RuleMatch> matches;
 			
 			matches = langTool.check(reviewText);
 			
 			for (RuleMatch match : matches) {
-			  System.out.println("Potential typo at characters " +
-			      match.getFromPos() + "-" + match.getToPos() + ": " +
-			      match.getMessage());
-			  System.out.println("Suggested correction(s): " +
-			      match.getSuggestedReplacements());
+//			  System.out.println("Potential typo at characters " +
+//			      match.getFromPos() + "-" + match.getToPos() + ": " +
+//			      match.getMessage());
+//			  System.out.println("Suggested correction(s): " +
+//			      match.getSuggestedReplacements());
 			  this.reviewTextSpellingError++;
 			}
 			
-			System.out.println("reviewTextSpellingError: " + reviewTextSpellingError);
+//			System.out.println("reviewTextSpellingError: " + reviewTextSpellingError);
 			
 			matches = langTool.check(summary);
 			
 			for (RuleMatch match : matches) {
-			  System.out.println("Potential typo at characters " +
-			      match.getFromPos() + "-" + match.getToPos() + ": " +
-			      match.getMessage());
-			  System.out.println("Suggested correction(s): " +
-			      match.getSuggestedReplacements());
+//			  System.out.println("Potential typo at characters " +
+//			      match.getFromPos() + "-" + match.getToPos() + ": " +
+//			      match.getMessage());
+//			  System.out.println("Suggested correction(s): " +
+//			      match.getSuggestedReplacements());
 			  this.summarySpellingError++;
 			}
 			
-			System.out.println("summarySpellingError: " + summarySpellingError);
+//			System.out.println("summarySpellingError: " + summarySpellingError);
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	private void calculateSyllable(){
+		this.reviewTextWordsNbSyllables = new int[reviewTextWords.length];
+		reviewTextWordsNbSyllablesLen = reviewTextWords.length;
+		
+		this.summaryWordsNbSyllables = new int[summaryWords.length];
+		summaryWordsNbSyllablesLen = summaryWords.length;
+		
+		EnglishSyllableCounter esc = new EnglishSyllableCounter();
+		
+		for(int ii = 0; ii < reviewTextWordsNbSyllablesLen; ii++){
+			reviewTextWordsNbSyllables[ii] = esc.countSyllables(reviewTextWords[ii]);
+		}
+		
+		for(int ii = 0; ii < summaryWordsNbSyllablesLen; ii++){
+			summaryWordsNbSyllables[ii] = esc.countSyllables(summaryWords[ii]);
+		}
+		
+		// checking
+//		System.out.println("Check Syllables");
+//		System.out.println("reviewText");
+//		for(int ii = 0; ii < reviewTextWordsNbSyllablesLen; ii++){
+//			System.out.println(reviewTextWords[ii] + 
+//					" = " + reviewTextWordsNbSyllables[ii]);
+//		}
+//		
+//		System.out.println("summary");
+//		for(int ii = 0; ii < summaryWordsNbSyllablesLen; ii++){
+//			System.out.println(summaryWords[ii] + " = " +
+//					summaryWordsNbSyllables[ii]);
+//		}
+	}
+	
+	private void calculateComplexWords(){
+		// reviewText
+		for(int ii = 0; ii < reviewTextWordsNbSyllablesLen; ii++){
+			if(reviewTextWordsNbSyllables[ii] > 2){
+				reviewTextNbComplexWords++;
+			}
+		}
+		
+		// summary
+		for(int ii = 0; ii < summaryWordsNbSyllablesLen; ii++){
+			if(summaryWordsNbSyllables[ii] > 2) {
+				summaryNbComplexWords++;
+			}
+		}
+		
+		// checking
+//		System.out.println("reviewTextNbComplexWords: " + reviewTextNbComplexWords);
+//		System.out.println("summaryNbComplexWords: " + summaryNbComplexWords);
+	}
+	
+	private void calculateFOG(){
+		// FOG Formula
+		// FOG = 0.4 * [(words / sentences) + 100 * (complex words / words)]
+		
+		reviewTextFOG = 0.4 * ((reviewTextWords.length / reviewTextSentences.length) 
+					+ (100 * (reviewTextNbComplexWords / reviewTextNbComplexWords)));
+		summaryFOG = 0.4 * ((summaryWords.length / summarySentences.length) 
+				+ (100 * (summaryNbComplexWords / summaryNbComplexWords)));
+		
+		System.out.println("reviewTextFOG: " + reviewTextFOG);
+		System.out.println("summaryFOG: " + summaryFOG);
 		
 	}
 }
