@@ -30,16 +30,22 @@ public class Main {
 		try{
 			Connection dbConn=DriverManager.getConnection(url,username,password);
 			System.out.println("Connection OK\n");
-			Statement st = dbConn.createStatement(); 
+			dbConn.setAutoCommit(false);
 			
-			String query = "select top 5 * from [AmazonReviewData].[dbo].[ReviewDataFiltered]";
-			ResultSet rs = st.executeQuery(query);
+			Statement selectStatement = dbConn.createStatement();
+//			Statement insertStatement = dbConn.createStatement();
+			
+			String selectQuery = "select top 5 * from [AmazonReviewData].[dbo].[ReviewDataFiltered]";
+			String insertQuery = "";
+			ResultSet rs = selectStatement.executeQuery(selectQuery);
 			Review review = new Review();
 			
 			while(rs.next()){
 				review.parseFromSQL(rs);
-				System.out.println(review.toString());
 				review.calculateMetrics();
+				System.out.println(review.toString());
+				insertQuery = review.getInsertIntoReviewDataFiltered3050MetricsScore();
+//				insertStatement.executeQuery(insertQuery);
 			}
 			
 			

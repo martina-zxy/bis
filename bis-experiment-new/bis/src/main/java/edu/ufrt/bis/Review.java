@@ -76,19 +76,30 @@ public class Review {
 	
 	public String toString() {
 		return  "Database Variables" + "\n" +
-//				"    reviewerID: " + reviewerID + "\n" +
-//				"    asin: " + asin + "\n" +
-//				"    reviewerName: " + reviewerName + "\n" +
-//				"    helpful: " + "[" + helpful[0] + "," + helpful[1] + "]" + "\n" +
+				"    reviewerID: " + reviewerID + "\n" +
+				"    asin: " + asin + "\n" +
+				"    reviewerName: " + reviewerName + "\n" +
+				"    helpful: " + "[" + helpful[0] + "," + helpful[1] + "]" + "\n" +
 				"    reviewText: " + reviewText + "\n" +
-//				"    overall: " + overall + "\n" +
+				"    overall: " + overall + "\n" +
 				"    summary: " + summary + "\n" +
-//				"    unixReviewTime: " + unixReviewTime + "\n" +
-//				"    reviewTime: " + reviewTime + "\n" +
-//				"    reviewDate: " + reviewDate + "\n" +
+				"    unixReviewTime: " + unixReviewTime + "\n" +
+				"    reviewTime: " + reviewTime + "\n" +
+				"    reviewDate: " + reviewDate + "\n" +
 				"Derived Variables" + "\n" +
 				"    reviewTextLength: " + reviewTextLength + "\n" +
-				"    summaryLength: " + summaryLength + "\n" 
+				"    summaryLength: " + summaryLength + "\n" +
+				"    reviewTextSpellingError: " + reviewTextSpellingError + "\n" +
+				"    summarySpellingError: " + summarySpellingError + "\n" +
+				"    spellingErrorRatio: " + spellingErrorRatio + "\n" + 
+				"    reviewTextFOG: " + reviewTextFOG + "\n" + 
+				"    summaryFOG: " + summaryFOG + "\n" + 
+				"    reviewTextFK: " + reviewTextFK + "\n" +
+				"    summaryFK: " + summaryFK + "\n" +
+				"    reviewTextARI: " + reviewTextARI + "\n" +
+				"    summaryARI: " + summaryARI + "\n" +
+				"    reviewTextCLI: " + reviewTextCLI + "\n" + 
+				"    summaryCLI: " + summaryCLI + "\n"
 				;
 	}
 	
@@ -99,7 +110,7 @@ public class Review {
 		this.reviewTime = reviewTime.replace("'", "''");
 	}
 	
-	public String getInsertInto(){
+	public String getInsertIntoReviewDataTest(){
 		String insertIntoText = "INSERT INTO [AmazonReviewData].[dbo].[ReviewDataTest] ([asin], [reviewerID], [unixReviewTime], [reviewerName],[nbHelpful],[nbVotes],[reviewText],[overall],[summary],[reviewTime],[reviewDate])";
 		// example
 		//VALUES ('0000000116', 'AH2L9G3DQHHAJ', 1019865600, 'chris', 5, 5, 'XXX.', 
@@ -120,6 +131,36 @@ public class Review {
 				helpful[0] + "," + helpful[1] + ",'" + reviewText + "'," + overall + ",'" + summary + "','" + 
 				reviewTime + "','" + reviewDate + "');";
 		return insertIntoText + valueText;
+	}
+	
+	public String getInsertIntoReviewDataFiltered3050MetricsScore(){
+		String insertIntoText = "INSERT INTO [AmazonReviewData].[dbo].[ReviewDataFiltered3050MetricsScore] ([asin], [reviewerID], [unixReviewTime], [reviewDate],[helpfulness],[spellingErrRatio],[reviewTextFOG],[summaryFOG],[reviewTextFK],[summaryFK],[reviewTextARI],[summaryARI],[reviewTextCLI],[summaryCLI])";
+		
+//		[asin], 
+//		[reviewerID], 
+//		[unixReviewTime], 
+//		[reviewDate],
+//		[helpfulness],
+//		[spellingErrRatio],
+//		[reviewTextFOG],
+//		[summaryFOG],
+//		[reviewTextFK],
+//		[summaryFK],
+//		[reviewTextARI],
+//		[summaryARI],
+//		[reviewTextCLI],
+//		[summaryCLI])
+		
+		double helpfulness = (double) helpful[0] / (double) helpful[1];
+		
+		String valueText = "VALUES ('" + asin + "','" + reviewerID + "'," + unixReviewTime + ",'" +
+		reviewDate + "'," + helpfulness + "," + spellingErrorRatio + "," + 
+		reviewTextFOG + "," + summaryFOG + "," + reviewTextFK + "," + 
+		summaryFK + "," + reviewTextARI + "," + summaryARI + "," + 
+		reviewTextCLI + "," + summaryCLI + ");";
+		
+		return insertIntoText + valueText;
+		
 	}
 	
 	public void parseFromSQL(ResultSet rs){
@@ -219,11 +260,11 @@ public class Review {
 			matches = langTool.check(reviewText);
 			
 			for (RuleMatch match : matches) {
-			  System.out.println("Potential typo at characters " +
-			      match.getFromPos() + "-" + match.getToPos() + ": " +
-			      match.getMessage());
-			  System.out.println("Suggested correction(s): " +
-			      match.getSuggestedReplacements());
+//			  System.out.println("Potential typo at characters " +
+//			      match.getFromPos() + "-" + match.getToPos() + ": " +
+//			      match.getMessage());
+//			  System.out.println("Suggested correction(s): " +
+//			      match.getSuggestedReplacements());
 			  this.reviewTextSpellingError++;
 			}
 			
@@ -233,18 +274,18 @@ public class Review {
 				this.reviewTextSpellingErrorRatio = 0;
 			}
 			
-			System.out.println("reviewTextSpellingError: " + reviewTextSpellingError);
-			System.out.println("reviewTextLength: " + reviewTextLength);
+//			System.out.println("reviewTextSpellingError: " + reviewTextSpellingError);
+//			System.out.println("reviewTextLength: " + reviewTextLength);
 //			System.out.println("reviewTextSpellingErrorRatio: " + reviewTextSpellingErrorRatio);
 			
 			matches = langTool.check(summary);
 			
 			for (RuleMatch match : matches) {
-			  System.out.println("Potential typo at characters " +
-			      match.getFromPos() + "-" + match.getToPos() + ": " +
-			      match.getMessage());
-			  System.out.println("Suggested correction(s): " +
-			      match.getSuggestedReplacements());
+//			  System.out.println("Potential typo at characters " +
+//			      match.getFromPos() + "-" + match.getToPos() + ": " +
+//			      match.getMessage());
+//			  System.out.println("Suggested correction(s): " +
+//			      match.getSuggestedReplacements());
 			  this.summarySpellingError++;
 			}
 			
@@ -254,8 +295,8 @@ public class Review {
 				this.summarySpellingErrorRatio = 0;
 			}
 			
-			System.out.println("summarySpellingError: " + summarySpellingError);
-			System.out.println("summaryLength: " + summaryLength);
+//			System.out.println("summarySpellingError: " + summarySpellingError);
+//			System.out.println("summaryLength: " + summaryLength);
 //			System.out.println("summarySpellingErrorRatio: " + summarySpellingErrorRatio);
 			
 			if((reviewTextLength + summaryLength) != 0){
@@ -265,7 +306,7 @@ public class Review {
 				this.spellingErrorRatio = 0.0;
 			}
 			
-			System.out.println("spellingErrorRatio: " + spellingErrorRatio);
+//			System.out.println("spellingErrorRatio: " + spellingErrorRatio);
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -290,21 +331,21 @@ public class Review {
 		this.reviewTextCLI = readabilityReviewText.getColemanLiau();
 		this.summaryCLI = readabilitySummary.getColemanLiau();
 		
-		System.out.println("FOG Index");
-		System.out.println("reviewTextFOG: " + reviewTextFOG);
-		System.out.println("summaryFOG: " + summaryFOG);
-		
-		System.out.println("FK Index");
-		System.out.println("reviewTextFK: " + reviewTextFK);
-		System.out.println("summaryFK: " + summaryFK);
-		
-		System.out.println("ARI Index");
-		System.out.println("reviewTextARI: " + reviewTextARI);
-		System.out.println("summaryARI: " + summaryARI);
-		
-		System.out.println("CLI Index");
-		System.out.println("reviewTextCLI: " + reviewTextCLI);
-		System.out.println("summaryCLI: " + summaryCLI);
+//		System.out.println("FOG Index");
+//		System.out.println("reviewTextFOG: " + reviewTextFOG);
+//		System.out.println("summaryFOG: " + summaryFOG);
+//		
+//		System.out.println("FK Index");
+//		System.out.println("reviewTextFK: " + reviewTextFK);
+//		System.out.println("summaryFK: " + summaryFK);
+//		
+//		System.out.println("ARI Index");
+//		System.out.println("reviewTextARI: " + reviewTextARI);
+//		System.out.println("summaryARI: " + summaryARI);
+//		
+//		System.out.println("CLI Index");
+//		System.out.println("reviewTextCLI: " + reviewTextCLI);
+//		System.out.println("summaryCLI: " + summaryCLI);
 		
 	}
 	
