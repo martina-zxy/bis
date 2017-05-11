@@ -53,6 +53,8 @@ public class Review {
 	double reviewTextSpellingErrorRatio = 0.0;
 	double summarySpellingErrorRatio = 0.0;
 	
+	double spellingErrorRatio = 0.0;
+	
 	Readability readabilityReviewText;
 	Readability readabilitySummary;
 	
@@ -217,11 +219,11 @@ public class Review {
 			matches = langTool.check(reviewText);
 			
 			for (RuleMatch match : matches) {
-//			  System.out.println("Potential typo at characters " +
-//			      match.getFromPos() + "-" + match.getToPos() + ": " +
-//			      match.getMessage());
-//			  System.out.println("Suggested correction(s): " +
-//			      match.getSuggestedReplacements());
+			  System.out.println("Potential typo at characters " +
+			      match.getFromPos() + "-" + match.getToPos() + ": " +
+			      match.getMessage());
+			  System.out.println("Suggested correction(s): " +
+			      match.getSuggestedReplacements());
 			  this.reviewTextSpellingError++;
 			}
 			
@@ -231,18 +233,18 @@ public class Review {
 				this.reviewTextSpellingErrorRatio = 0;
 			}
 			
-//			System.out.println("reviewTextSpellingError: " + reviewTextSpellingError);
-//			System.out.println("reviewTextLength: " + reviewTextLength);
+			System.out.println("reviewTextSpellingError: " + reviewTextSpellingError);
+			System.out.println("reviewTextLength: " + reviewTextLength);
 //			System.out.println("reviewTextSpellingErrorRatio: " + reviewTextSpellingErrorRatio);
 			
 			matches = langTool.check(summary);
 			
 			for (RuleMatch match : matches) {
-//			  System.out.println("Potential typo at characters " +
-//			      match.getFromPos() + "-" + match.getToPos() + ": " +
-//			      match.getMessage());
-//			  System.out.println("Suggested correction(s): " +
-//			      match.getSuggestedReplacements());
+			  System.out.println("Potential typo at characters " +
+			      match.getFromPos() + "-" + match.getToPos() + ": " +
+			      match.getMessage());
+			  System.out.println("Suggested correction(s): " +
+			      match.getSuggestedReplacements());
 			  this.summarySpellingError++;
 			}
 			
@@ -252,9 +254,18 @@ public class Review {
 				this.summarySpellingErrorRatio = 0;
 			}
 			
-//			System.out.println("summarySpellingError: " + summarySpellingError);
-//			System.out.println("summaryLength: " + summaryLength);
+			System.out.println("summarySpellingError: " + summarySpellingError);
+			System.out.println("summaryLength: " + summaryLength);
 //			System.out.println("summarySpellingErrorRatio: " + summarySpellingErrorRatio);
+			
+			if((reviewTextLength + summaryLength) != 0){
+				this.spellingErrorRatio = ((double)reviewTextSpellingError + (double)summarySpellingError) / 
+										((double)reviewTextLength + (double)summaryLength);
+			} else{
+				this.spellingErrorRatio = 0.0;
+			}
+			
+			System.out.println("spellingErrorRatio: " + spellingErrorRatio);
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
