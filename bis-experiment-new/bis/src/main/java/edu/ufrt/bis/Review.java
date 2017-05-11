@@ -33,11 +33,11 @@ public class Review {
 	int reviewTextLength;
 	int summaryLength;
 	
-	String[] reviewTextSentences;
-	String[] summarySentences;
+//	String[] reviewTextSentences;
+//	String[] summarySentences;
 	
-	String[] reviewTextWords;
-	String[] summaryWords;
+//	String[] reviewTextWords;
+//	String[] summaryWords;
 	
 //	int[] reviewTextWordsNbSyllables;
 //	int reviewTextWordsNbSyllablesLen;
@@ -139,11 +139,11 @@ public class Review {
 			this.reviewTextLength = 0;
 			this.summaryLength = 0;
 			
-			this.reviewTextSentences = null;
-			this.summarySentences = null;
-			
-			this.reviewTextWords = null;
-			this.summaryWords = null;
+//			this.reviewTextSentences = null;
+//			this.summarySentences = null;
+//			
+//			this.reviewTextWords = null;
+//			this.summaryWords = null;
 			
 //			this.reviewTextWordsNbSyllables = null;
 //			this.reviewTextWordsNbSyllablesLen = 0;
@@ -202,11 +202,11 @@ public class Review {
 	
 	private void calculateSpellingError(){
 		
-		this.reviewTextSentences = reviewText.split("[!?\\.]+");
-		this.summarySentences = summary.split("[!?\\.]+");
-		
-		this.reviewTextWords = reviewText.split("[&\"?!;,\\s\\.]+");
-		this.summaryWords = summary.split("[&\"?!;,\\s\\.]+");
+//		this.reviewTextSentences = reviewText.split("[!?\\.]+");
+//		this.summarySentences = summary.split("[!?\\.]+");
+//		
+//		this.reviewTextWords = reviewText.split("[&\"?!;,\\s\\.]+");
+//		this.summaryWords = summary.split("[&\"?!;,\\s\\.]+");
 		
 		try {
 			JLanguageTool langTool;
@@ -263,6 +263,37 @@ public class Review {
 	}
 	
 	private void calculateAllReadability(){
+		
+		this.readabilityReviewText = new Readability(reviewText);
+		this.readabilitySummary = new Readability(summary);
+		
+		this.reviewTextFOG = readabilityReviewText.getGunningFog();
+		this.summaryFOG = readabilitySummary.getGunningFog();
+
+		this.reviewTextFK = readabilityReviewText.getFleschReadingEase();
+		this.summaryFK = readabilitySummary.getFleschReadingEase();
+		
+		this.reviewTextARI = readabilityReviewText.getARI();
+		this.summaryARI = readabilitySummary.getARI();
+		
+		this.reviewTextCLI = readabilityReviewText.getColemanLiau();
+		this.summaryCLI = readabilitySummary.getColemanLiau();
+		
+		System.out.println("FOG Index");
+		System.out.println("reviewTextFOG: " + reviewTextFOG);
+		System.out.println("summaryFOG: " + summaryFOG);
+		
+		System.out.println("FK Index");
+		System.out.println("reviewTextFK: " + reviewTextFK);
+		System.out.println("summaryFK: " + summaryFK);
+		
+		System.out.println("ARI Index");
+		System.out.println("reviewTextARI: " + reviewTextARI);
+		System.out.println("summaryARI: " + summaryARI);
+		
+		System.out.println("CLI Index");
+		System.out.println("reviewTextCLI: " + reviewTextCLI);
+		System.out.println("summaryCLI: " + summaryCLI);
 		
 	}
 	
