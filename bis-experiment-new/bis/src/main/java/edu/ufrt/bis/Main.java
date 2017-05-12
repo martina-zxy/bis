@@ -30,24 +30,59 @@ public class Main {
 		try{
 			Connection dbConn=DriverManager.getConnection(url,username,password);
 			System.out.println("Connection OK\n");
-			dbConn.setAutoCommit(false);
+//			dbConn.setAutoCommit(false);
 			
 			Statement selectStatement = dbConn.createStatement();
-//			Statement insertStatement = dbConn.createStatement();
+			Statement insertStatement = dbConn.createStatement();
 			
-			String selectQuery = "select top 5 * from [AmazonReviewData].[dbo].[ReviewDataFiltered]";
-			String insertQuery = "";
-			ResultSet rs = selectStatement.executeQuery(selectQuery);
-			Review review = new Review();
+			int offset = 0;
+			int fetch = 1000;
+//			int maxRow = 34;
+			int maxRow = 1160195;
 			
-			while(rs.next()){
-				review.parseFromSQL(rs);
-				review.calculateMetrics();
-				System.out.println(review.toString());
-				insertQuery = review.getInsertIntoReviewDataFiltered3050MetricsScore();
-//				insertStatement.executeQuery(insertQuery);
+			int counter = 1;
+			
+			// remember when resetting, offset = counter - 1
+			
+			while(offset < maxRow){
+				if((offset + fetch) > maxRow) {
+					fetch = maxRow - offset;
+				}
+				String selectQuery = "select * from [AmazonReviewData].[dbo].[ReviewDataFiltered3050] " + 
+						"order by asin asc, reviewerID asc, unixReviewTime asc " + 
+						"offset " + offset + " rows fetch next " + fetch + " rows only";
+				String insertQuery = "";
+				ResultSet rs = selectStatement.executeQuery(selectQuery);
+				Review review = new Review();
+				
+				while(rs.next()){
+					System.out.println(counter++);
+					review.parseFromSQL(rs);
+	//				System.out.println("Before: ");
+	//				System.out.println(review.toString());
+					review.calculateMetrics();
+//					System.out.println("After: ");
+//					System.out.println(review.toString());
+					insertQuery = review.getInsertIntoReviewDataFiltered3050MetricsScore();
+	//				System.out.println("insertQuery: " + insertQuery);
+					insertStatement.execute(insertQuery);
+				}
+				offset += fetch;
 			}
 			
+//			String selectQuery = "select top 100000 * from [AmazonReviewData].[dbo].[ReviewDataFiltered3050]";
+//			String insertQuery = "";
+//			ResultSet rs = selectStatement.executeQuery(selectQuery);
+//			Review review = new Review();
+//			
+//			while(rs.next()){
+//				review.parseFromSQL(rs);
+//				review.calculateMetrics();
+//				System.out.println(review.toString());
+//				insertQuery = review.getInsertIntoReviewDataFiltered3050MetricsScore();
+////				System.out.println("insertQuery: " + insertQuery);
+//				insertStatement.execute(insertQuery);
+//			}
 			
 		}catch(Exception e)
 		{

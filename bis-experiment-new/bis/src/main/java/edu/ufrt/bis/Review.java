@@ -134,27 +134,19 @@ public class Review {
 	}
 	
 	public String getInsertIntoReviewDataFiltered3050MetricsScore(){
-		String insertIntoText = "INSERT INTO [AmazonReviewData].[dbo].[ReviewDataFiltered3050MetricsScore] ([asin], [reviewerID], [unixReviewTime], [reviewDate],[helpfulness],[spellingErrRatio],[reviewTextFOG],[summaryFOG],[reviewTextFK],[summaryFK],[reviewTextARI],[summaryARI],[reviewTextCLI],[summaryCLI])";
+		String insertIntoText = "INSERT INTO [AmazonReviewData].[dbo].[ReviewDataFiltered3050MetricsScore] ([asin], [reviewerID], [unixReviewTime], [reviewDate],[nbHelpful],[nbVotes],[helpfulness],[reviewTextLength],[summaryLength],[spellingErrRatio],[reviewTextFOG],[summaryFOG],[reviewTextFK],[summaryFK],[reviewTextARI],[summaryARI],[reviewTextCLI],[summaryCLI])";
 		
-//		[asin], 
-//		[reviewerID], 
-//		[unixReviewTime], 
-//		[reviewDate],
-//		[helpfulness],
-//		[spellingErrRatio],
-//		[reviewTextFOG],
-//		[summaryFOG],
-//		[reviewTextFK],
-//		[summaryFK],
-//		[reviewTextARI],
-//		[summaryARI],
-//		[reviewTextCLI],
-//		[summaryCLI])
-		
-		double helpfulness = (double) helpful[0] / (double) helpful[1];
+		double helpfulness = 0.0;
+		if(helpful[1] != 0 ){ 
+			helpfulness = (double) helpful[0] / (double) helpful[1];
+		} else {
+			helpfulness = 0.0;
+		}
 		
 		String valueText = "VALUES ('" + asin + "','" + reviewerID + "'," + unixReviewTime + ",'" +
-		reviewDate + "'," + helpfulness + "," + spellingErrorRatio + "," + 
+		reviewDate + "'," + helpful[0] + "," + helpful[1] + "," +  
+		helpfulness + "," + reviewTextLength + "," + summaryLength + "," +
+		spellingErrorRatio + "," + 
 		reviewTextFOG + "," + summaryFOG + "," + reviewTextFK + "," + 
 		summaryFK + "," + reviewTextARI + "," + summaryARI + "," + 
 		reviewTextCLI + "," + summaryCLI + ");";
@@ -319,17 +311,53 @@ public class Review {
 		this.readabilityReviewText = new Readability(reviewText);
 		this.readabilitySummary = new Readability(summary);
 		
-		this.reviewTextFOG = readabilityReviewText.getGunningFog();
-		this.summaryFOG = readabilitySummary.getGunningFog();
-
-		this.reviewTextFK = readabilityReviewText.getFleschReadingEase();
-		this.summaryFK = readabilitySummary.getFleschReadingEase();
+		try{
+			this.reviewTextFOG = readabilityReviewText.getGunningFog();
+		} catch(Exception e){
+			this.reviewTextFOG = 0.0;
+		}
 		
-		this.reviewTextARI = readabilityReviewText.getARI();
-		this.summaryARI = readabilitySummary.getARI();
+		try{
+			this.summaryFOG = readabilitySummary.getGunningFog();
+		} catch(Exception e){
+			this.summaryFOG = 0.0;
+		}
 		
-		this.reviewTextCLI = readabilityReviewText.getColemanLiau();
-		this.summaryCLI = readabilitySummary.getColemanLiau();
+		try{
+			this.reviewTextFK = readabilityReviewText.getFleschReadingEase();
+		} catch (Exception e){
+			this.reviewTextFK = 0.0;
+		}
+		
+		try{
+			this.summaryFK = readabilitySummary.getFleschReadingEase();
+		} catch (Exception e){
+			this.summaryFK = 0.0;
+		}
+		
+		try{
+			this.reviewTextARI = readabilityReviewText.getARI();
+		} catch(Exception e){
+			this.reviewTextARI = 0.0;
+		}
+		
+		try{
+			this.summaryARI = readabilitySummary.getARI();
+		} catch (Exception e){
+			this.summaryARI = 0.0;
+		}
+		
+		try{
+			this.reviewTextCLI = readabilityReviewText.getColemanLiau();
+		} catch (Exception e){
+			this.reviewTextCLI = 0.0;
+		}
+		
+		try{
+			this.summaryCLI = readabilitySummary.getColemanLiau();
+		} catch (Exception e){
+			this.summaryCLI = 0.0;
+		}
 		
 //		System.out.println("FOG Index");
 //		System.out.println("reviewTextFOG: " + reviewTextFOG);
