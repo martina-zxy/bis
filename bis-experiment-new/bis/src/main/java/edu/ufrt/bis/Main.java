@@ -67,8 +67,8 @@ public class Main {
 				while(rs.next()){
 					System.out.println(counter++);
 					review.parseFromSQL(rs);
-//					System.out.println("Before: ");
-//					System.out.println(review.toString());
+					System.out.println("Before: ");
+					System.out.println(review.toString());
 					review.calculateMetrics();
 //					System.out.println("After: ");
 //					System.out.println(review.toString());
