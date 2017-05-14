@@ -70,6 +70,9 @@ public class Review {
 	double reviewTextCLI = 0.0;
 	double summaryCLI = 0.0;
 	
+	double polarity = 0.0;
+	double deviation = 0.0;
+	
 	public Review(){
 		
 	}
@@ -99,7 +102,9 @@ public class Review {
 				"    reviewTextARI: " + reviewTextARI + "\n" +
 				"    summaryARI: " + summaryARI + "\n" +
 				"    reviewTextCLI: " + reviewTextCLI + "\n" + 
-				"    summaryCLI: " + summaryCLI + "\n"
+				"    summaryCLI: " + summaryCLI + "\n" +
+				"    polarity: " + polarity + "\n" + 
+				"    deviation: " + deviation + "\n"
 				;
 	}
 	
@@ -212,6 +217,9 @@ public class Review {
 			this.reviewTextCLI = 0.0;
 			this.summaryCLI = 0.0;
 			
+			this.polarity = 0.0;
+			this.deviation = 0.0;
+			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -228,6 +236,7 @@ public class Review {
 //		calculateComplexWords();
 //		calculateFOG();
 		calculateAllReadability();
+		calculatePolarityAndDeviation();
 	}
 	
 	private void calculateLength(){
@@ -375,6 +384,15 @@ public class Review {
 //		System.out.println("reviewTextCLI: " + reviewTextCLI);
 //		System.out.println("summaryCLI: " + summaryCLI);
 		
+	}
+	
+	private void calculatePolarityAndDeviation(){
+		String text = this.reviewText + ". " + summary;
+		this.polarity = Main.polarityCalculator.getParagraphScore(text);
+		
+		double temp = overall - new Float(Main.product.getData(asin));
+		
+		this.deviation = Math.abs(temp);
 	}
 	
 	// Unused

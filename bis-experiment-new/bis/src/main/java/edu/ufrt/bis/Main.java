@@ -7,7 +7,16 @@ import java.sql.Statement;
 
 public class Main {
 
+	public static Product product;
+	
+	public static PolarityCalculator polarityCalculator;
+	
 	public static void main(String args[]){
+		
+		// initialize the asin score and polarity calculator
+		String asinFile = "asin_info.csv";
+		Main.product = new Product(asinFile);
+		Main.polarityCalculator = new PolarityCalculator();
 		
 		// connection to the database
 		String driverName="com.microsoft.sqlserver.jdbc.SQLServerDriver";
@@ -36,9 +45,9 @@ public class Main {
 			Statement insertStatement = dbConn.createStatement();
 			
 			int offset = 0;
-			int fetch = 1000;
+			int fetch = 10;
 //			int maxRow = 34;
-			int maxRow = 1160195;
+			int maxRow = 10;
 			
 			int counter = 1;
 			
@@ -58,14 +67,14 @@ public class Main {
 				while(rs.next()){
 					System.out.println(counter++);
 					review.parseFromSQL(rs);
-	//				System.out.println("Before: ");
-	//				System.out.println(review.toString());
+//					System.out.println("Before: ");
+//					System.out.println(review.toString());
 					review.calculateMetrics();
 //					System.out.println("After: ");
 //					System.out.println(review.toString());
 					insertQuery = review.getInsertIntoReviewDataFiltered3050MetricsScore();
 	//				System.out.println("insertQuery: " + insertQuery);
-					insertStatement.execute(insertQuery);
+//					insertStatement.execute(insertQuery);
 				}
 				offset += fetch;
 			}
