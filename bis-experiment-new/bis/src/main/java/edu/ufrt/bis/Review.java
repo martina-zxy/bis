@@ -139,7 +139,7 @@ public class Review {
 	}
 	
 	public String getInsertIntoReviewDataFiltered3050MetricsScore(){
-		String insertIntoText = "INSERT INTO [AmazonReviewData].[dbo].[ReviewDataFiltered3050MetricsScore] ([asin], [reviewerID], [unixReviewTime], [reviewDate],[nbHelpful],[nbVotes],[helpfulness],[reviewTextLength],[summaryLength],[spellingErrRatio],[reviewTextFOG],[summaryFOG],[reviewTextFK],[summaryFK],[reviewTextARI],[summaryARI],[reviewTextCLI],[summaryCLI])";
+		String insertIntoText = "INSERT INTO [AmazonReviewData].[dbo].[ReviewDataFiltered3050MetricsScore] ([asin],[reviewerID],[reviewDate],[rating],[nbHelpful],[nbVotes],[helpfulness],[reviewTextLength],[summaryLength],[spellingErrRatio],[reviewTextFOG],[summaryFOG],[reviewTextFK],[summaryFK],[reviewTextARI],[summaryARI],[reviewTextCLI],[summaryCLI],[polarity],[deviation])";
 		
 		double helpfulness = 0.0;
 		if(helpful[1] != 0 ){ 
@@ -148,13 +148,13 @@ public class Review {
 			helpfulness = 0.0;
 		}
 		
-		String valueText = "VALUES ('" + asin + "','" + reviewerID + "'," + unixReviewTime + ",'" +
-		reviewDate + "'," + helpful[0] + "," + helpful[1] + "," +  
+		String valueText = "VALUES ('" + asin + "','" + reviewerID + "','" +
+		reviewDate + "'," + overall + "," + helpful[0] + "," + helpful[1] + "," +  
 		helpfulness + "," + reviewTextLength + "," + summaryLength + "," +
 		spellingErrorRatio + "," + 
 		reviewTextFOG + "," + summaryFOG + "," + reviewTextFK + "," + 
 		summaryFK + "," + reviewTextARI + "," + summaryARI + "," + 
-		reviewTextCLI + "," + summaryCLI + ");";
+		reviewTextCLI + "," + summaryCLI + "," + polarity + "," + deviation + ");";
 		
 		return insertIntoText + valueText;
 		
