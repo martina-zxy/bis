@@ -1,6 +1,7 @@
 package edu.ufrt.bis;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
@@ -169,4 +170,31 @@ public class PolarityCalculator {
 	    
 	    
 	}
+    
+    public void checkData(String filename){
+    	File file = new File(filename);
+    	
+    	PolarityCalculator test = new PolarityCalculator();
+    	
+    	try {
+			BufferedReader reader = new BufferedReader(new FileReader(file));
+			String line;
+			
+			line = reader.readLine(); // skip first row
+			
+			int rows = 1;
+			
+			while((line = reader.readLine()) != null){
+				String[] data = line.split("\t");
+				String reviewText = data[0];
+				String summary = data[1];
+				
+				String paragraph = reviewText + ". " + summary;
+				
+				System.out.println(rows + " : " + test.getParagraphScore(paragraph));
+			}
+		} catch (Exception e) {
+			System.out.println("Cannot find file");
+		}
+    }
 }
