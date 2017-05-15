@@ -34,9 +34,6 @@ public class Product {
 	public static void main(String args[]){
 		Product books = new Product("asin_info.csv");
 		
-		System.out.println(books.getData("1476755590"));
-		System.out.println(books.getData("966189914"));
-		System.out.println(books.getData("B00F2WZSXU"));
-		System.out.println(books.getData("1493788868"));
+		System.out.println(books.getData("0001055178"));
 	}
 }

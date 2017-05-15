@@ -390,7 +390,7 @@ public class Review {
 		String text = this.reviewText + ". " + summary;
 		this.polarity = Main.polarityCalculator.getParagraphScore(text);
 		
-		double temp = overall - new Float(Main.product.getData(asin));
+		double temp = overall - new Float(Main.product.asinAvgScore.get(asin));
 		
 		this.deviation = Math.abs(temp);
 	}

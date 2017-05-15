@@ -47,7 +47,7 @@ public class Main {
 			int offset = 0;
 			int fetch = 10;
 //			int maxRow = 34;
-			int maxRow = 10;
+			int maxRow = 100;
 			
 			int counter = 1;
 			
