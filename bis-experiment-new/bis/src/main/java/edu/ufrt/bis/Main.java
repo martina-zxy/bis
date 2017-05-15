@@ -67,11 +67,11 @@ public class Main {
 				while(rs.next()){
 					System.out.println(counter++);
 					review.parseFromSQL(rs);
-					System.out.println("Before: ");
-					System.out.println(review.toString());
-					review.calculateMetrics();
-//					System.out.println("After: ");
+//					System.out.println("Before: ");
 //					System.out.println(review.toString());
+					review.calculateMetrics();
+					System.out.println("After: ");
+					System.out.println(review.toString());
 					insertQuery = review.getInsertIntoReviewDataFiltered3050MetricsScore();
 	//				System.out.println("insertQuery: " + insertQuery);
 //					insertStatement.execute(insertQuery);

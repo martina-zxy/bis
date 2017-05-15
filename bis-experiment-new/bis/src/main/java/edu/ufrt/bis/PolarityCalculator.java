@@ -167,20 +167,20 @@ public class PolarityCalculator {
 
     public static void main(String[] args) throws IOException {
 	
-	    String sample = " It works much better with this great example";
+//	    String sample = " It works much better with this great example";
 	    
 	    PolarityCalculator test = new PolarityCalculator();
-	    System.out.println(test.getSentenceScore(sample));
-	    System.out.println(test.getSentenceScore(sample + " excellent!"));
+//	    System.out.println(test.getSentenceScore(sample));
+//	    System.out.println(test.getSentenceScore(sample + " excellent!"));
 	    
-	    String paragraph = "I could not have loved it more. Water for Elephants is one of those wonderful novels that has an interesting setting, but it doesn''t let the setting take over the story. It is a novel about the people in that place, and the people of Benzini''s circus took over my mind and stay with me still.Jacob begins Water for Elephants alone. Orphaned by his immigrant parents, he is weeks away from his Cornell graduation, but he simply cannot return to the life he has known. He jumps aboard a moving train-the train carrying the Benzini circus to its next production. No one on the circus cares that Jacob didn''t finish his final exams. The diploma, he is told, \"is just a piece of paper, and nobody here gives a damn about that. You''re on a show now. The rules are different.\"In fact, the circus seems to have no rules at all. Jacob somehow finds other kind souls among the misfits, and these people work together to protect themselves and the animals. The villians-Uncle Al and August-are well described and three-dimensional. You understand why they behave the way they do. These villians are not cookie-cutter images, and their real-world sensibilities make them even more frightening.";
+	    String paragraph = "I enjoyed this book for the most part, particularly the characters and the tales of circus life. I would have given it 5 stars but thought the ending was weak. Also, the jumping from nursing home to circus and to nursing home was distracting.. Good Book, Weak Ending";
 //	    String paragraph = "Outstanding!";
 	    System.out.println(test.getParagraphScore(paragraph));
 	    
-	    
+//	    checkData("review_text_summary.txt");
 	}
     
-    public void checkData(String filename){
+    private static void checkData(String filename){
     	File file = new File(filename);
     	
     	PolarityCalculator test = new PolarityCalculator();
@@ -200,7 +200,10 @@ public class PolarityCalculator {
 				
 				String paragraph = reviewText + ". " + summary;
 				
-				System.out.println(rows + " : " + test.getParagraphScore(paragraph));
+				System.out.println(rows++);
+				System.out.println(paragraph);
+				double score = test.getParagraphScore(paragraph);
+				System.out.println(score);
 			}
 		} catch (Exception e) {
 			System.out.println("Cannot find file");
