@@ -81,7 +81,7 @@ public class PolarityCalculator {
     
     public Double getSentenceScore(String sentence) {
     	sentence = sentence.trim().replaceAll("([^a-zA-Z\\s])", "");
-    	
+
     	// Find the starting index of the sentence to read
         String patternStr = "[a-zA-Z0-9]";
         Pattern pattern = Pattern.compile(patternStr);
@@ -104,11 +104,17 @@ public class PolarityCalculator {
 	    
 	    for (int i=0; i<taggedWords.length;i++) {
 
-//	    	System.out.println(i + " : " + taggedWords[i] + " : " + words[i]);
-	        String tail = taggedWords[i].substring(words[i].length() + 1);
+//	    	System.out.println(i + " : " + taggedWords[i]);
+//	    	System.out.println(taggedWords[i] + " : " + words[i].length() + " : " + taggedWords[i].lastIndexOf('#') );
+	    	int indexTail = taggedWords[i].lastIndexOf('_');
+	    	
+	    	if (indexTail < 0) continue;
+	        String tail = taggedWords[i].substring(indexTail + 1);
+	        String word = taggedWords[i].substring(0, indexTail );
+	        
 	        Double score = null;
 	        if(tail!=null){
-	            score = extract(words[i], tail);
+	            score = extract(word, tail);
 	            if (score != null) countSentiment++;
 //	            System.out.println(taggedWords[i] + "\t" + words[i] + "\t" + tail + "\t" + score);
 	        }
@@ -116,7 +122,10 @@ public class PolarityCalculator {
 	            continue;
 	        totalScore += score;
 	    }
-
+	    
+	    if (countSentiment == 0)
+	    	return 0.0;
+	    
 	    return totalScore/countSentiment;
     }
     
