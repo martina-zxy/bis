@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import edu.stanford.nlp.tagger.maxent.MaxentTagger;
 
@@ -78,9 +80,20 @@ public class PolarityCalculator {
     }
     
     public Double getSentenceScore(String sentence) {
-
-    	int countSentiment = 0;
     	sentence = sentence.trim().replaceAll("([^a-zA-Z\\s])", "");
+    	
+    	// Find the starting index of the sentence to read
+        String patternStr = "[a-zA-Z0-9]";
+        Pattern pattern = Pattern.compile(patternStr);
+        Matcher matcher = pattern.matcher(sentence);
+        if(matcher.find()){
+        	sentence = sentence.substring(matcher.start(),sentence.length());
+        } else {
+        	return 0.0;
+        }
+    	
+    	int countSentiment = 0;
+    	
 	    String[] words = sentence.split("\\s+");
 	    
 	    String taggedSample = tagger.tagString(sentence);
@@ -88,18 +101,14 @@ public class PolarityCalculator {
 //	    System.out.println(tagger.tagString(sentence));
 	    
 	    double totalScore = 0;
-	    PolarityCalculator test = new PolarityCalculator();
 	    
 	    for (int i=0; i<taggedWords.length;i++) {
-	    	System.out.println(i);
-	    	System.out.println("taggedWords[i]: " + taggedWords[i]);
-	    	System.out.println("words[i]: " + words[i]);
-	    	System.out.println("words[i].length() + 1: " + (words[i].length() + 1));
-	    	
+
+//	    	System.out.println(i + " : " + taggedWords[i] + " : " + words[i]);
 	        String tail = taggedWords[i].substring(words[i].length() + 1);
 	        Double score = null;
 	        if(tail!=null){
-	            score = test.extract(words[i], tail);
+	            score = extract(words[i], tail);
 	            if (score != null) countSentiment++;
 //	            System.out.println(taggedWords[i] + "\t" + words[i] + "\t" + tail + "\t" + score);
 	        }
