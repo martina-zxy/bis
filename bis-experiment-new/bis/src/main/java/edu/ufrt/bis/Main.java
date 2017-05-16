@@ -44,10 +44,10 @@ public class Main {
 			Statement selectStatement = dbConn.createStatement();
 			Statement insertStatement = dbConn.createStatement();
 			
-			int offset = 0;
-			int fetch = 10;
+			int offset = 415791;
+			int fetch = 1000;
 //			int maxRow = 34;
-			int maxRow = 100;
+			int maxRow = 522804;
 			
 			int counter = 1;
 			
@@ -70,11 +70,11 @@ public class Main {
 //					System.out.println("Before: ");
 //					System.out.println(review.toString());
 					review.calculateMetrics();
-					System.out.println("After: ");
-					System.out.println(review.toString());
+//					System.out.println("After: ");
+//					System.out.println(review.toString());
 					insertQuery = review.getInsertIntoReviewDataFiltered3050MetricsScore();
 	//				System.out.println("insertQuery: " + insertQuery);
-//					insertStatement.execute(insertQuery);
+					insertStatement.execute(insertQuery);
 				}
 				offset += fetch;
 			}
