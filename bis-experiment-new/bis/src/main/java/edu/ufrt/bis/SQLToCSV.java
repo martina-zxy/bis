@@ -36,30 +36,44 @@ public class SQLToCSV {
 //			dbConn.setAutoCommit(false);
 			
 			Statement selectStatement = dbConn.createStatement();
+			for(int ii = 1; ii <= 25; ii++)
+			{
+				for (int jj = 10; jj <= 15; jj += 5){
+					int minVotes = ii; // 1 to 25
+					int minNbReviews = jj;
+					
+					// write arff header
+					String fileName = "review_metrics_score - minVotes " + minVotes 
+							+ " minNbReviews " + minNbReviews + ".arff";
+					
+					File fout = new File(fileName);
+					FileOutputStream fos = new FileOutputStream(fout);
+				 
+					BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
+					
+					printARFFHeaderFull(bw);
+					
+					int counter = 1;
+		
+					String selectQuery = "select * from [AmazonReviewData].[dbo].[ReviewDataFiltered3050MetricsScore] as rr "; 
+					String whereQuery = "where rr.nbVotes> " + minVotes + " and reviewerID in (";
+					String subquerySelect = "select reviewerID from [AmazonReviewData].[dbo].[ReviewDataFiltered3050MetricsScore] as r ";
+					String subqueryWhere = "where r.nbvotes> " + minVotes + " group by reviewerid having count(*)>" + minNbReviews + ")";
+					
+					String fullQuery = selectQuery + whereQuery + subquerySelect + subqueryWhere;
+					
+					ResultSet rs = selectStatement.executeQuery(fullQuery);
+					ReviewMetricsScore reviewMetricsScore = new ReviewMetricsScore();
 			
-			// write arff header
-			File fout = new File("review_metrics_score.arff");
-			FileOutputStream fos = new FileOutputStream(fout);
-		 
-			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
-			
-			printARFFHeaderFull(bw);
-			
-			int counter = 1;
-
-			String selectQuery = "select * from [AmazonReviewData].[dbo].[ReviewDataFiltered3050MetricsScore492996Test] "; 
-			
-			ResultSet rs = selectStatement.executeQuery(selectQuery);
-			ReviewMetricsScore reviewMetricsScore = new ReviewMetricsScore();
-	
-			while(rs.next()){
-				System.out.println(counter++);
-				reviewMetricsScore.parseFromSQL(rs);
-				bw.write(reviewMetricsScore.getCSVFull());
+					while(rs.next()){
+						System.out.println(counter++);
+						reviewMetricsScore.parseFromSQL(rs);
+						bw.write(reviewMetricsScore.getCSVFull());
+					}	
+					
+					bw.close();
+				}
 			}
-				
-			
-			bw.close();
 		} catch(Exception e){
 			
 		}

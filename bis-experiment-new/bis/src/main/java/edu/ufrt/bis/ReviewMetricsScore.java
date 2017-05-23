@@ -14,8 +14,10 @@ public class ReviewMetricsScore {
 	int nbHelpful;
 	int nbVotes;
 	double helpfulness;
-	int reviewTextLength;
-	int summaryLength;
+//	int reviewTextLength;
+//	int summaryLength;
+	double reviewTextLength;
+	double summaryLength;
 	double spellingErrRatio;
 	double reviewTextFOG = 0.0;
 	double summaryFOG = 0.0;
@@ -30,6 +32,36 @@ public class ReviewMetricsScore {
 	
 	public ReviewMetricsScore(){
 		
+	}
+	
+	@SuppressWarnings("deprecation")
+	public ReviewMetricsScore(String csv){
+		String[] data = csv.split(",");
+		
+		this.asin = data[0].replace("\"", "");
+		this.reviewerID = data[1].replace("\"", "");
+
+		String date[] = data[2].replace("\"","").split("-");
+//		System.out.println(date[0] + "-" + date[1] + "-" + date[2]);
+		this.reviewDate = new Date(Integer.parseInt(date[0])-1900,
+				Integer.parseInt(date[1])-1,Integer.parseInt(date[2]));
+		this.rating = Double.parseDouble(data[3]);
+		this.nbHelpful = Integer.parseInt(data[4]);
+		this.nbVotes = Integer.parseInt(data[5]);
+		this.helpfulness = Double.parseDouble(data[6]);
+		this.reviewTextLength = Integer.parseInt(data[7]);
+		this.summaryLength = Integer.parseInt(data[8]);
+		this.spellingErrRatio = Double.parseDouble(data[9]);
+		this.reviewTextFOG = Double.parseDouble(data[10]);
+		this.summaryFOG = Double.parseDouble(data[11]);
+		this.reviewTextFK = Double.parseDouble(data[12]);
+		this.summaryFK = Double.parseDouble(data[13]);
+		this.reviewTextARI = Double.parseDouble(data[14]);
+		this.summaryARI = Double.parseDouble(data[15]);
+		this.reviewTextCLI = Double.parseDouble(data[16]);
+		this.summaryCLI = Double.parseDouble(data[17]);
+		this.polarity = Double.parseDouble(data[18]);
+		this.deviation = Double.parseDouble(data[19]);
 	}
 	
 	public void parseFromSQL(ResultSet rs){
