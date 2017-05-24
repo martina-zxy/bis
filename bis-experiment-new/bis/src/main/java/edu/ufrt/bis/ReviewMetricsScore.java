@@ -49,8 +49,8 @@ public class ReviewMetricsScore {
 		this.nbHelpful = Integer.parseInt(data[4]);
 		this.nbVotes = Integer.parseInt(data[5]);
 		this.helpfulness = Double.parseDouble(data[6]);
-		this.reviewTextLength = Integer.parseInt(data[7]);
-		this.summaryLength = Integer.parseInt(data[8]);
+		this.reviewTextLength = (int)Double.parseDouble(data[7]);
+		this.summaryLength = (int)Double.parseDouble(data[8]);
 		this.spellingErrRatio = Double.parseDouble(data[9]);
 		this.reviewTextFOG = Double.parseDouble(data[10]);
 		this.summaryFOG = Double.parseDouble(data[11]);

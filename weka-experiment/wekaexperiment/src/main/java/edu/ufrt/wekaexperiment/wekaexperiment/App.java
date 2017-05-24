@@ -23,6 +23,7 @@ public class App
 {
 	
 	static String[][] evaluationData;
+	static String[][] coefficientData;
 	
 	private static void checkAttributes(Instances instances){
 		System.out.println("Check attributes:");
@@ -34,14 +35,17 @@ public class App
 	
     public static void main( String[] args ) throws Exception
     {
-    	evaluationData = new String[52][7];
+    	evaluationData = new String[51][7];
     	evaluationData[0][0] = "dataset name";
     	evaluationData[0][1] = "Total number of instances";
-    	evaluationData[0][2] = "Mean absolute error";
-    	evaluationData[0][3] = "Root mean squared error";
-    	evaluationData[0][4] = "Relative absolute error";
-    	evaluationData[0][5] = "Root relative squared error";
-    	evaluationData[0][6] = "Correlation coefficient";
+    	evaluationData[0][2] = "Correlation coefficient";
+    	evaluationData[0][3] = "Mean absolute error";
+    	evaluationData[0][4] = "Root mean squared error";
+    	evaluationData[0][5] = "Relative absolute error";
+    	evaluationData[0][6] = "Root relative squared error";
+    	
+//    	coefficientData = new String[51][11];
+    	coefficientData = new String[51][12];
     	
         File folder = new File(".\\");
         File[] listOfFiles = folder.listFiles();
@@ -62,6 +66,7 @@ public class App
         }
 
         printEvaluation();
+        printCoefficient();
     }
     
     private static void printEvaluation() throws FileNotFoundException{
@@ -69,6 +74,17 @@ public class App
     	for(int ii = 0; ii < evaluationData.length; ii ++){
     		for(int jj = 0; jj < evaluationData[ii].length; jj++){
     			writer.write(evaluationData[ii][jj] + ",");
+    		}
+    		writer.write("\n");
+    	}
+    	writer.close();
+    }
+    
+    private static void printCoefficient() throws FileNotFoundException{
+    	PrintWriter writer = new PrintWriter ("coefficient result.csv");
+    	for(int ii = 0; ii < coefficientData.length; ii ++){
+    		for(int jj = 0; jj < coefficientData[ii].length; jj++){
+    			writer.write(coefficientData[ii][jj] + ",");
     		}
     		writer.write("\n");
     	}
@@ -83,7 +99,8 @@ public class App
         
         // remove unused indices
         int classIndex = 0;
-        int[] removedIndices = new int [10];
+//        int[] removedIndices = new int [10];
+        int[] removedIndices = new int [11];
         int j = 0;
         
 
@@ -98,6 +115,7 @@ public class App
 					  name.startsWith("reviewDate") || 
 					  name.startsWith("nbHelpful") ||
 					  name.startsWith("nbVotes") ||
+//					  name.startsWith("spellingErrRatio") ||
 					  name.startsWith("reviewTextFOG") ||
 					  name.startsWith("summaryFOG") ||
 					  name.startsWith("summaryFK") ||
@@ -130,10 +148,22 @@ public class App
         
         double[] lmCoeffs = linearRegression.coefficients();
         
-//        System.out.println("Building Model Result:");
+        coefficientData[0][0] = "dataset name";
+        
+        // initialize the header        
+        int jj = 1;
+        for(jj = 1; jj < lmCoeffs.length - 1;jj++){
+        	coefficientData[0][jj] = trainReduced.attribute(jj-1).name();
+        }
+        coefficientData[0][jj] = "deviation";
+        coefficientData[0][jj+1] = "constant";
+        coefficientData[fileNumber][0] = trainFile;
+        
+//      System.out.println("Building Model Result:");
         PrintWriter printWriter = new PrintWriter(trainFile.split("\\.")[0] + " - model result.txt" );
         printWriter.write("helpfulness = \n");
         for(int ii = 0; ii < lmCoeffs.length; ii++){
+        	coefficientData[fileNumber][ii+1] = "" + lmCoeffs[ii];
         	if(ii != lmCoeffs.length - 1)
         		printWriter.write(lmCoeffs[ii] + " * " + trainReduced.attribute(ii).name() + " + \n");
         	else
