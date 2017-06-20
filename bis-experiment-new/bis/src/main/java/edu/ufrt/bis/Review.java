@@ -1,5 +1,9 @@
 package edu.ufrt.bis;
 
+/**
+ * This class represents a review.
+ */
+
 import java.io.File;
 import java.io.IOException;
 import java.sql.Date;
@@ -18,35 +22,23 @@ import com.ipeirotis.readability.*;
 public class Review {
 	
 	// database variables
-	String reviewerID;
-	String asin;
-	String reviewerName;
-	int[] helpful = {0,0};
-	String reviewText;
-	double overall;
-	String summary;
-	int unixReviewTime;
-	String reviewTime;
-	Date reviewDate;
+	String reviewerID; // the ID of a reviewer
+	String asin; // the asin of the product
+	String reviewerName; // reviewer name
+	int[] helpful = {0,0}; // 0 index = number of helpful votes; 1 index = number of votes
+	String reviewText; // the text of the review
+	double overall; // the rating of the review
+	String summary; // the text of the summary
+	int unixReviewTime; // the time of the review in Unix format
+	String reviewTime; // the time of the review in (MM DD, YYYY) format
+	Date reviewDate; // the time of the review in Date format
 	
 	// derived variables
-	int reviewTextLength;
+	int reviewTextLength; // the length of the review text and summary text
 	int summaryLength;
 	
-//	String[] reviewTextSentences;
-//	String[] summarySentences;
-	
-//	String[] reviewTextWords;
-//	String[] summaryWords;
-	
-//	int[] reviewTextWordsNbSyllables;
-//	int reviewTextWordsNbSyllablesLen;
-//	int[] summaryWordsNbSyllables;
-//	int summaryWordsNbSyllablesLen;
-	
-//	int reviewTextNbComplexWords;
-//	int summaryNbComplexWords;
-	
+	// variables to calculate the spelling error metrics score
+	// in the final version, only the combined review text and summary text is used (spellingErrorRatio)
 	int reviewTextSpellingError = 0;
 	int summarySpellingError = 0;
 	
@@ -55,9 +47,11 @@ public class Review {
 	
 	double spellingErrorRatio = 0.0;
 	
+	// the Readability variable used to calculate the readability index
 	Readability readabilityReviewText;
 	Readability readabilitySummary;
 	
+	// the readability index score
 	double reviewTextFOG = 0.0;
 	double summaryFOG = 0.0;
 
@@ -70,6 +64,7 @@ public class Review {
 	double reviewTextCLI = 0.0;
 	double summaryCLI = 0.0;
 	
+	// the polarity and deviation metrics score
 	double polarity = 0.0;
 	double deviation = 0.0;
 	
@@ -77,6 +72,10 @@ public class Review {
 		
 	}
 	
+	/**
+	 * toString method to gain information of the Review instances.
+	 * Mainly used for debugging purpose.
+	 */
 	public String toString() {
 		return  "Database Variables" + "\n" +
 				"    reviewerID: " + reviewerID + "\n" +
@@ -108,6 +107,10 @@ public class Review {
 				;
 	}
 	
+	/**
+	 * preprocess method to make the data applicable in Java.
+	 * required because the raw data contains some dirtiness.
+	 */
 	public void preprocessed(){
 		this.reviewerName = reviewerName.replace("'", "''");
 		this.reviewText = reviewText.replace("'", "''");
@@ -115,54 +118,16 @@ public class Review {
 		this.reviewTime = reviewTime.replace("'", "''");
 	}
 	
-	public String getInsertIntoReviewDataTest(){
-		String insertIntoText = "INSERT INTO [AmazonReviewData].[dbo].[ReviewDataTest] ([asin], [reviewerID], [unixReviewTime], [reviewerName],[nbHelpful],[nbVotes],[reviewText],[overall],[summary],[reviewTime],[reviewDate])";
-		// example
-		//VALUES ('0000000116', 'AH2L9G3DQHHAJ', 1019865600, 'chris', 5, 5, 'XXX.', 
-		//4.0, 'Show me the money!','04 27, 2002');
-		
-		preprocessed();
-		
-		String reviewDate;
-		
-		if(reviewTime.length() == 11) {
-			reviewDate = reviewTime.substring(7, 11) + reviewTime.substring(0, 2) + reviewTime.substring(3, 5);
-		} else {
-			reviewDate = reviewTime.substring(6, 10) + reviewTime.substring(0, 2) + "0"+reviewTime.substring(3, 4);
-		}
-//		System.out.println(reviewDate);
-		
-		String valueText = " VALUES ('" + asin + "','" + reviewerID + "'," + unixReviewTime + ",'" + reviewerName + "'," + 
-				helpful[0] + "," + helpful[1] + ",'" + reviewText + "'," + overall + ",'" + summary + "','" + 
-				reviewTime + "','" + reviewDate + "');";
-		return insertIntoText + valueText;
-	}
-	
-	public String getInsertIntoReviewDataFiltered3050MetricsScore(){
-		String insertIntoText = "INSERT INTO [AmazonReviewData].[dbo].[ReviewDataFiltered3050MetricsScore] ([asin],[reviewerID],[reviewDate],[rating],[nbHelpful],[nbVotes],[helpfulness],[reviewTextLength],[summaryLength],[spellingErrRatio],[reviewTextFOG],[summaryFOG],[reviewTextFK],[summaryFK],[reviewTextARI],[summaryARI],[reviewTextCLI],[summaryCLI],[polarity],[deviation])";
-		
-		double helpfulness = 0.0;
-		if(helpful[1] != 0 ){ 
-			helpfulness = (double) helpful[0] / (double) helpful[1];
-		} else {
-			helpfulness = 0.0;
-		}
-		
-		String valueText = "VALUES ('" + asin + "','" + reviewerID + "','" +
-		reviewDate + "'," + overall + "," + helpful[0] + "," + helpful[1] + "," +  
-		helpfulness + "," + reviewTextLength + "," + summaryLength + "," +
-		spellingErrorRatio + "," + 
-		reviewTextFOG + "," + summaryFOG + "," + reviewTextFK + "," + 
-		summaryFK + "," + reviewTextARI + "," + summaryARI + "," + 
-		reviewTextCLI + "," + summaryCLI + "," + polarity + "," + deviation + ");";
-		
-		return insertIntoText + valueText;
-		
-	}
-	
+	/**
+	 * method to parse the Review from the SQL.
+	 * Used in conjunction with the SQL library.
+	 * Mandatory due to the iteration of every element returned from the SQL query.
+	 * This class is used in the main method in the Main class.
+	 * @param rs
+	 */
 	public void parseFromSQL(ResultSet rs){
 		try {
-			
+			// get the variables from the database
 			this.reviewerID = rs.getString("reviewerID");
 			this.asin = rs.getString("asin");
 			this.reviewerName = rs.getString("reviewerName");
@@ -178,20 +143,6 @@ public class Review {
 			//reset derived variable
 			this.reviewTextLength = 0;
 			this.summaryLength = 0;
-			
-//			this.reviewTextSentences = null;
-//			this.summarySentences = null;
-//			
-//			this.reviewTextWords = null;
-//			this.summaryWords = null;
-			
-//			this.reviewTextWordsNbSyllables = null;
-//			this.reviewTextWordsNbSyllablesLen = 0;
-//			this.summaryWordsNbSyllables = null;
-//			this.summaryWordsNbSyllablesLen = 0;
-//			
-//			this.reviewTextNbComplexWords = 0;
-//			this.summaryNbComplexWords = 0;
 			
 			this.reviewTextARI = 0.0;
 			this.summaryARI = 0.0;
@@ -227,31 +178,29 @@ public class Review {
 		}
 	}
 	
-	
+	/**
+	 * Method to calculate the metrics score.
+	 */
 	public void calculateMetrics(){
 		calculateLength();
-//		calculateARI();
 		calculateSpellingError();
-//		calculateSyllable();
-//		calculateComplexWords();
-//		calculateFOG();
 		calculateAllReadability();
 		calculatePolarityAndDeviation();
 	}
 	
+	/**
+	 * Method to calculate the length.
+	 */
 	private void calculateLength(){
 		this.reviewTextLength = reviewText.length();
 		this.summaryLength = summary.length();
 	}
 	
+	/**
+	 * Method to calculate the spelling error.
+	 * Use JLanguageTool to calculate the spelling error.
+	 */
 	private void calculateSpellingError(){
-		
-//		this.reviewTextSentences = reviewText.split("[!?\\.]+");
-//		this.summarySentences = summary.split("[!?\\.]+");
-//		
-//		this.reviewTextWords = reviewText.split("[&\"?!;,\\s\\.]+");
-//		this.summaryWords = summary.split("[&\"?!;,\\s\\.]+");
-		
 		try {
 			JLanguageTool langTool;
 			langTool = new JLanguageTool(new BritishEnglish());
@@ -261,6 +210,10 @@ public class Review {
 			matches = langTool.check(reviewText);
 			
 			for (RuleMatch match : matches) {
+				/**
+				 * Everytime the JLanguagetTool find some potential spelling error, count.
+				 * We can also print out the possible spelling error, however this is not needed.
+				 */
 //			  System.out.println("Potential typo at characters " +
 //			      match.getFromPos() + "-" + match.getToPos() + ": " +
 //			      match.getMessage());
@@ -269,16 +222,23 @@ public class Review {
 			  this.reviewTextSpellingError++;
 			}
 			
+			// calculate the review text spelling error ratio
+			// in the final version, this variable is not used since the used one is the combination of
+			// review text and summary text
 			if(reviewTextLength != 0 ){
 				this.reviewTextSpellingErrorRatio = (double)reviewTextSpellingError / (double) reviewTextLength;
 			} else {
 				this.reviewTextSpellingErrorRatio = 0;
 			}
 			
+			// for debugging purpose
 //			System.out.println("reviewTextSpellingError: " + reviewTextSpellingError);
 //			System.out.println("reviewTextLength: " + reviewTextLength);
 //			System.out.println("reviewTextSpellingErrorRatio: " + reviewTextSpellingErrorRatio);
 			
+			/**
+			 * Applies the same method for the summary.
+			 */
 			matches = langTool.check(summary);
 			
 			for (RuleMatch match : matches) {
@@ -296,10 +256,15 @@ public class Review {
 				this.summarySpellingErrorRatio = 0;
 			}
 			
+			// for debugging purpose
 //			System.out.println("summarySpellingError: " + summarySpellingError);
 //			System.out.println("summaryLength: " + summaryLength);
 //			System.out.println("summarySpellingErrorRatio: " + summarySpellingErrorRatio);
 			
+			/**
+			 * Calculate the spelling error ratio.
+			 * This is the final variable that were used.
+			 */
 			if((reviewTextLength + summaryLength) != 0){
 				this.spellingErrorRatio = ((double)reviewTextSpellingError + (double)summarySpellingError) / 
 										((double)reviewTextLength + (double)summaryLength);
@@ -307,6 +272,7 @@ public class Review {
 				this.spellingErrorRatio = 0.0;
 			}
 			
+			// for debugging purpose
 //			System.out.println("spellingErrorRatio: " + spellingErrorRatio);
 			
 		} catch (IOException e) {
@@ -315,11 +281,17 @@ public class Review {
 		}
 	}
 	
+	/**
+	 * Method to calculate all readability index.
+	 */
 	private void calculateAllReadability(){
 		
+		// initialize the readability variable
 		this.readabilityReviewText = new Readability(reviewText);
 		this.readabilitySummary = new Readability(summary);
 		
+		// calculate the readability index by utilizing available library.
+		// mandatory to put try and catch exception.
 		try{
 			this.reviewTextFOG = readabilityReviewText.getGunningFog();
 		} catch(Exception e){
@@ -368,6 +340,7 @@ public class Review {
 			this.summaryCLI = 0.0;
 		}
 		
+		// for debugging purpose
 //		System.out.println("FOG Index");
 //		System.out.println("reviewTextFOG: " + reviewTextFOG);
 //		System.out.println("summaryFOG: " + summaryFOG);
@@ -383,143 +356,46 @@ public class Review {
 //		System.out.println("CLI Index");
 //		System.out.println("reviewTextCLI: " + reviewTextCLI);
 //		System.out.println("summaryCLI: " + summaryCLI);
-		
 	}
 	
+	/**
+	 * Method to calculate the polarity and deviation metrics
+	 */
 	private void calculatePolarityAndDeviation(){
+		// combine the review text and summary text
 		String text = this.reviewText + ". " + summary;
+		// calculate the polarity
 		this.polarity = Main.polarityCalculator.getParagraphScore(text);
 		
+		// calculate the deviation
 		double temp = overall - new Float(Main.product.asinAvgScore.get(asin));
-		
 		this.deviation = Math.abs(temp);
 	}
 	
-	// Unused
-//	private void calculateARI(){
-//		
-//		this.reviewTextSentences = reviewText.split("[!?\\.]+");
-//		this.summarySentences = summary.split("[!?\\.]+");
-//		
-////		System.out.println("reviewTextSentence:");
-////		for(String s : reviewTextSentences)
-////			System.out.println(s);
-////		
-////		System.out.println("summarySentence:");
-////		for(String s : summarySentences)
-////			System.out.println(s);
-////		
-//		this.reviewTextWords = reviewText.split("[&\"?!;,\\s\\.]+");
-//		this.summaryWords = summary.split("[&\"?!;,\\s\\.]+");
-//		
-////		System.out.println("reviewTextWord:");
-////		for(String s : reviewTextWords)
-////			System.out.println(s);
-////		
-////		System.out.println("summaryWord:");
-////		for(String s : summaryWords)
-////			System.out.println(s);
-//		
-//		// automated readability index formula
-//		// 4.71 (characters / words) + 0.5 (words / sentences) - 21.43
-//		// where:
-//		// characters is the number of letters and numbers
-//		// words is the number of spaces
-//		// sentences is the number of sentences
-//		
-//		int reviewTextCharactersScore = 0;
-//		for(String s : reviewTextWords){
-//			reviewTextCharactersScore += s.length();
-//		}
-//		int reviewTextWordsScore = reviewTextWords.length;
-//		int reviewTextSentencesScore = reviewTextSentences.length;
-//		
-//		int summaryCharactersScore = 0;
-//		for(String s : summaryWords){
-//			summaryCharactersScore += s.length();
-//		}
-//		int summaryWordsScore = summaryWords.length;
-//		int summarySentencesScore = summarySentences.length;
-//		
-////		System.out.println("summaryCharactersScore: " + summaryCharactersScore);
-////		System.out.println("summaryWordsScore: " + summaryWordsScore);
-////		System.out.println("summarySentencesScore: " + summarySentencesScore);
-//		
-//		this.reviewTextARI = (4.71 * ((double)reviewTextCharactersScore / (double)reviewTextWordsScore)) 
-//							 + (0.5 * ((double)reviewTextWordsScore / (double)reviewTextSentencesScore)) 
-//							 - 21.43;
-//		
-//		this.summaryARI = (4.71 * ((double)summaryCharactersScore / (double)summaryWordsScore)) 
-//				 + (0.5 * ((double)summaryWordsScore / (double)summarySentencesScore)) 
-//				 - 21.43;
-//		
-//		System.out.println("reviewTextARI: " + reviewTextARI);
-//		System.out.println("summaryARI: " + summaryARI);
-//	}
-	
-//	private void calculateSyllable(){
-//		this.reviewTextWordsNbSyllables = new int[reviewTextWords.length];
-//		reviewTextWordsNbSyllablesLen = reviewTextWords.length;
-//		
-//		this.summaryWordsNbSyllables = new int[summaryWords.length];
-//		summaryWordsNbSyllablesLen = summaryWords.length;
-//		
-//		EnglishSyllableCounter esc = new EnglishSyllableCounter();
-//		
-//		for(int ii = 0; ii < reviewTextWordsNbSyllablesLen; ii++){
-//			reviewTextWordsNbSyllables[ii] = esc.countSyllables(reviewTextWords[ii]);
-//		}
-//		
-//		for(int ii = 0; ii < summaryWordsNbSyllablesLen; ii++){
-//			summaryWordsNbSyllables[ii] = esc.countSyllables(summaryWords[ii]);
-//		}
-//		
-//		// checking
-////		System.out.println("Check Syllables");
-////		System.out.println("reviewText");
-////		for(int ii = 0; ii < reviewTextWordsNbSyllablesLen; ii++){
-////			System.out.println(reviewTextWords[ii] + 
-////					" = " + reviewTextWordsNbSyllables[ii]);
-////		}
-////		
-////		System.out.println("summary");
-////		for(int ii = 0; ii < summaryWordsNbSyllablesLen; ii++){
-////			System.out.println(summaryWords[ii] + " = " +
-////					summaryWordsNbSyllables[ii]);
-////		}
-//	}
-//	
-//	private void calculateComplexWords(){
-//		// reviewText
-//		for(int ii = 0; ii < reviewTextWordsNbSyllablesLen; ii++){
-//			if(reviewTextWordsNbSyllables[ii] > 2){
-//				reviewTextNbComplexWords++;
-//			}
-//		}
-//		
-//		// summary
-//		for(int ii = 0; ii < summaryWordsNbSyllablesLen; ii++){
-//			if(summaryWordsNbSyllables[ii] > 2) {
-//				summaryNbComplexWords++;
-//			}
-//		}
-//		
-//		// checking
-////		System.out.println("reviewTextNbComplexWords: " + reviewTextNbComplexWords);
-////		System.out.println("summaryNbComplexWords: " + summaryNbComplexWords);
-//	}
-//	
-//	private void calculateFOG(){
-//		// FOG Formula
-//		// FOG = 0.4 * [(words / sentences) + 100 * (complex words / words)]
-//		
-//		reviewTextFOG = 0.4 * ((reviewTextWords.length / reviewTextSentences.length) 
-//					+ (100 * (reviewTextNbComplexWords / reviewTextNbComplexWords)));
-//		summaryFOG = 0.4 * ((summaryWords.length / summarySentences.length) 
-//				+ (100 * (summaryNbComplexWords / summaryNbComplexWords)));
-//		
-//		System.out.println("reviewTextFOG: " + reviewTextFOG);
-//		System.out.println("summaryFOG: " + summaryFOG);
-//		
-//	}
+	/**
+	 * Method to form the SQL statement to insert the metrics score into database.
+	 * @return SQL statement
+	 */
+	public String getInsertIntoReviewDataFiltered3050MetricsScore(){
+		String insertIntoText = "INSERT INTO [AmazonReviewData].[dbo].[ReviewDataFiltered3050MetricsScore] ([asin],[reviewerID],[reviewDate],[rating],[nbHelpful],[nbVotes],[helpfulness],[reviewTextLength],[summaryLength],[spellingErrRatio],[reviewTextFOG],[summaryFOG],[reviewTextFK],[summaryFK],[reviewTextARI],[summaryARI],[reviewTextCLI],[summaryCLI],[polarity],[deviation])";
+		
+		// calculate the helpfulness ratio beforehand
+		double helpfulness = 0.0;
+		if(helpful[1] != 0 ){ 
+			helpfulness = (double) helpful[0] / (double) helpful[1];
+		} else {
+			helpfulness = 0.0;
+		}
+		
+		// form the SQL query
+		String valueText = "VALUES ('" + asin + "','" + reviewerID + "','" +
+		reviewDate + "'," + overall + "," + helpful[0] + "," + helpful[1] + "," +  
+		helpfulness + "," + reviewTextLength + "," + summaryLength + "," +
+		spellingErrorRatio + "," + 
+		reviewTextFOG + "," + summaryFOG + "," + reviewTextFK + "," + 
+		summaryFK + "," + reviewTextARI + "," + summaryARI + "," + 
+		reviewTextCLI + "," + summaryCLI + "," + polarity + "," + deviation + ");";
+		
+		return insertIntoText + valueText;	
+	}
 }

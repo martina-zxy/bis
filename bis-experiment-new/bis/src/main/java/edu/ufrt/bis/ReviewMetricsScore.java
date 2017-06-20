@@ -4,6 +4,10 @@ import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * Class to parse the review metrics score from the database.
+ *
+ */
 public class ReviewMetricsScore {
 	
 	// variables
@@ -14,10 +18,10 @@ public class ReviewMetricsScore {
 	int nbHelpful;
 	int nbVotes;
 	double helpfulness;
-//	int reviewTextLength;
-//	int summaryLength;
-	double reviewTextLength;
-	double summaryLength;
+	int reviewTextLength;
+	int summaryLength;
+//	double reviewTextLength;
+//	double summaryLength;
 	double spellingErrRatio;
 	double reviewTextFOG = 0.0;
 	double summaryFOG = 0.0;
@@ -30,10 +34,18 @@ public class ReviewMetricsScore {
 	double polarity = 0.0;
 	double deviation = 0.0;
 	
+	/**
+	 * Default constructor.
+	 */
 	public ReviewMetricsScore(){
 		
 	}
 	
+	/**
+	 * Constructor to parse review metrics score from csv file.
+	 * Not used in the final version.
+	 * @param csv
+	 */
 	@SuppressWarnings("deprecation")
 	public ReviewMetricsScore(String csv){
 		String[] data = csv.split(",");
@@ -64,6 +76,10 @@ public class ReviewMetricsScore {
 		this.deviation = Double.parseDouble(data[19]);
 	}
 	
+	/**
+	 * Method to parse the review metrics score from SQL.
+	 * @param rs
+	 */
 	public void parseFromSQL(ResultSet rs){
 		try {
 			this.asin = rs.getString("asin");
@@ -94,6 +110,10 @@ public class ReviewMetricsScore {
 		}
 	}
 	
+	/**
+	 * print information to CSV format.
+	 * @return
+	 */
 	public String getCSV(){
 		return 	//"\"" + asin + "\"" + ";" +
 				//"\"" + reviewerID + "\"" + ";" +
@@ -117,6 +137,10 @@ public class ReviewMetricsScore {
 				deviation + "\n";
 	}
 	
+	/**
+	 * Print information to CSV format, include the asin, reviewerID and reviewDate.
+	 * @return
+	 */
 	public String getCSVFull(){
 		return 	"\"" + asin + "\"" + "," +
 				"\"" + reviewerID + "\"" + "," +

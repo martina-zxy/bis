@@ -5,12 +5,23 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
+/**
+ * The Main class of this program.
+ * This class contains the function to calculate the metrics and put them into database.
+ * For the function to obtain the review metrics score instance and put into CSV, refer to SQLToCSV class.
+ *
+ */
 public class Main {
-
+	// static variables due to this variables only need to be initialized once every execution.
+	// the product information
 	public static Product product;
-	
+	// the polarity calculator
 	public static PolarityCalculator polarityCalculator;
 	
+	/**
+	 * Main method
+	 * @param args
+	 */
 	public static void main(String args[]){
 		
 		// initialize the asin score and polarity calculator
@@ -44,19 +55,22 @@ public class Main {
 			Statement selectStatement = dbConn.createStatement();
 			Statement insertStatement = dbConn.createStatement();
 			
+			// due to the high number of data, pagination of processing the data is needed.
+			// to paginate, the database should be ordered
+			// if the execution fails in the middle, we can continue the execution based on the last instances.
+			
 			int offset = 415791;
 			int fetch = 1000;
-//			int maxRow = 34;
 			int maxRow = 522804;
 			
 			int counter = 1;
 			
 			// remember when resetting, offset = counter - 1
-			
 			while(offset < maxRow){
 				if((offset + fetch) > maxRow) {
 					fetch = maxRow - offset;
 				}
+				// get the Review from the database
 				String selectQuery = "select * from [AmazonReviewData].[dbo].[ReviewDataFiltered3050] " + 
 						"order by asin asc, reviewerID asc, unixReviewTime asc " + 
 						"offset " + offset + " rows fetch next " + fetch + " rows only";
@@ -64,6 +78,7 @@ public class Main {
 				ResultSet rs = selectStatement.executeQuery(selectQuery);
 				Review review = new Review();
 				
+				// iterate every instances, calculate the metrics, and input into review metrics score table
 				while(rs.next()){
 					System.out.println(counter++);
 					review.parseFromSQL(rs);
@@ -79,21 +94,7 @@ public class Main {
 				offset += fetch;
 			}
 			
-//			String selectQuery = "select top 100000 * from [AmazonReviewData].[dbo].[ReviewDataFiltered3050]";
-//			String insertQuery = "";
-//			ResultSet rs = selectStatement.executeQuery(selectQuery);
-//			Review review = new Review();
-//			
-//			while(rs.next()){
-//				review.parseFromSQL(rs);
-//				review.calculateMetrics();
-//				System.out.println(review.toString());
-//				insertQuery = review.getInsertIntoReviewDataFiltered3050MetricsScore();
-////				System.out.println("insertQuery: " + insertQuery);
-//				insertStatement.execute(insertQuery);
-//			}
-			
-		}catch(Exception e)
+		} catch(Exception e)
 		{
 			e.printStackTrace();
 			System.out.print("Connection not OK");

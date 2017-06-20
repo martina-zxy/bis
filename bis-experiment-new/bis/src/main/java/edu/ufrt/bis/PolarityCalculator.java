@@ -13,10 +13,16 @@ import java.util.regex.Pattern;
 
 import edu.stanford.nlp.tagger.maxent.MaxentTagger;
 
+/**
+ * This class is used to calculate the polarity of the text.
+ * This class utilize the SentiWordNet and standford pos tagger.
+ */
 public class PolarityCalculator {
+	// variables
 	private String pathToSWN = "SentiWordNet_3.0.0/SentiWordNet_3.0.0_20130122.txt";
     private HashMap<String, Double>_dict;
     private static MaxentTagger tagger = new MaxentTagger("taggers/english-left3words-distsim.tagger");
+    
     
     public PolarityCalculator() {    	
     	_dict = new HashMap<String, Double>();

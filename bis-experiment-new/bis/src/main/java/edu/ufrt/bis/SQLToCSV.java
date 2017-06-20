@@ -10,6 +10,10 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
+/**
+ * This class is used to extract the review metrics score data from SQL to CSV.
+ * Includes the iteration of filtering method based on the number of votes and number of reviews.
+ */
 public class SQLToCSV {
 	public static void main(String args[]){
 		// connection to the database
@@ -31,7 +35,7 @@ public class SQLToCSV {
 		
 		// obtain data from the database
 		try{
-			Connection dbConn=DriverManager.getConnection(url,username,password);
+			Connection dbConn = DriverManager.getConnection(url,username,password);
 			System.out.println("Connection OK\n");
 //			dbConn.setAutoCommit(false);
 			
@@ -55,6 +59,7 @@ public class SQLToCSV {
 					
 					int counter = 1;
 		
+					// form the SQL query
 					String selectQuery = "select * from [AmazonReviewData].[dbo].[ReviewDataFiltered3050MetricsScore] as rr "; 
 					String whereQuery = "where rr.nbVotes> " + minVotes + " and reviewerID in (";
 					String subquerySelect = "select reviewerID from [AmazonReviewData].[dbo].[ReviewDataFiltered3050MetricsScore] as r ";
@@ -62,9 +67,11 @@ public class SQLToCSV {
 					
 					String fullQuery = selectQuery + whereQuery + subquerySelect + subqueryWhere;
 					
+					// obtain the data from SQL using the query
 					ResultSet rs = selectStatement.executeQuery(fullQuery);
 					ReviewMetricsScore reviewMetricsScore = new ReviewMetricsScore();
 			
+					// iterate through the instances and write into CSV files.
 					while(rs.next()){
 						System.out.println(counter++);
 						reviewMetricsScore.parseFromSQL(rs);
@@ -80,6 +87,11 @@ public class SQLToCSV {
 		
 	}
 	
+	/**
+	 * Method to print the ARFF Header (weka files).
+	 * @param bw
+	 * @throws IOException
+	 */
 	private static void printARFFHeader(BufferedWriter bw) throws IOException{
 		bw.write("@RELATION review_metrics_score\n\n");
 		bw.write("@ATTRIBUTE rating REAL\n");
@@ -103,6 +115,13 @@ public class SQLToCSV {
 		bw.write("@DATA\n");
 	}
 	
+	/**
+	 * Method to print the ARFF Header (weka files).
+	 * Include the asin, reviewerID and reviewDate.
+	 * This variables cannot be used in weka, hence need to be removed before building the model.
+	 * @param bw
+	 * @throws IOException
+	 */
 	private static void printARFFHeaderFull(BufferedWriter bw) throws IOException{
 		bw.write("@RELATION review_metrics_score\n\n");
 		bw.write("@ATTRIBUTE asin string\n");
