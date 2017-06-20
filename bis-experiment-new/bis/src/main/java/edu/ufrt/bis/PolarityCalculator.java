@@ -23,7 +23,9 @@ public class PolarityCalculator {
     private HashMap<String, Double>_dict;
     private static MaxentTagger tagger = new MaxentTagger("taggers/english-left3words-distsim.tagger");
     
-    
+    /**
+     * Default constructor of this class.
+     */
     public PolarityCalculator() {    	
     	_dict = new HashMap<String, Double>();
         HashMap<String, Vector<Double>> _temp = new HashMap<String, Vector<Double>>();
@@ -86,6 +88,11 @@ public class PolarityCalculator {
     	} 
     }
     
+    /**
+     * Method to get the sentence score.
+     * @param sentence
+     * @return
+     */
     public Double getSentenceScore(String sentence) {
     	sentence = sentence.trim().replaceAll("([^a-zA-Z\\s])", "");
 
@@ -136,6 +143,11 @@ public class PolarityCalculator {
 	    return totalScore/countSentiment;
     }
     
+    /**
+     * Method to get a paragraph score.
+     * @param paragraph
+     * @return
+     */
     public Double getParagraphScore(String paragraph) {
     	String[] sentences = paragraph.split("[!?\\.]+");
     	double totalScore = 0;
@@ -153,6 +165,12 @@ public class PolarityCalculator {
     	return totalScore/countSentiment;
     }
 
+    /**
+     * Method to extract the part of speech of a word.
+     * @param word
+     * @param tail
+     * @return
+     */
     public Double extract(String word, String tail) {
 	    if (tail.contains("NN") || tail.contains("NNS")
 	            || tail.contains("NNP")
@@ -172,6 +190,11 @@ public class PolarityCalculator {
 	        return null;
 	}
 
+    /**
+     * Main method to test this class.
+     * @param args
+     * @throws IOException
+     */
     public static void main(String[] args) throws IOException {
 	
 //	    String sample = " It works much better with this great example";
@@ -187,6 +210,10 @@ public class PolarityCalculator {
 //	    checkData("review_text_summary.txt");
 	}
     
+    /**
+     * Method to debug.
+     * @param filename
+     */
     private static void checkData(String filename){
     	File file = new File(filename);
     	
