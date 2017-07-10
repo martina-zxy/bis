@@ -65,6 +65,8 @@ public class Review {
 	double summaryCLI = 0.0;
 	
 	// the polarity and deviation metrics score
+	double polarityReviewText = 0.0;
+	double polaritySummary = 0.0;
 	double polarity = 0.0;
 	double deviation = 0.0;
 	
@@ -102,6 +104,8 @@ public class Review {
 				"    summaryARI: " + summaryARI + "\n" +
 				"    reviewTextCLI: " + reviewTextCLI + "\n" + 
 				"    summaryCLI: " + summaryCLI + "\n" +
+				"    polarityReviewText: " + polarityReviewText + "\n" +
+				"    polaritySummary: " + polaritySummary + "\n" +
 				"    polarity: " + polarity + "\n" + 
 				"    deviation: " + deviation + "\n"
 				;
@@ -168,6 +172,8 @@ public class Review {
 			this.reviewTextCLI = 0.0;
 			this.summaryCLI = 0.0;
 			
+			this.polarityReviewText = 0.0;
+			this.polaritySummary = 0.0;
 			this.polarity = 0.0;
 			this.deviation = 0.0;
 			
@@ -362,8 +368,12 @@ public class Review {
 	 * Method to calculate the polarity and deviation metrics
 	 */
 	private void calculatePolarityAndDeviation(){
+		// individual calculation
+		this.polarityReviewText = Main.polarityCalculator.getParagraphScore(this.reviewText);
+		this.polaritySummary = Main.polarityCalculator.getParagraphScore(this.summary);
+		
 		// combine the review text and summary text
-		String text = this.reviewText + ". " + summary;
+		String text = this.reviewText + ". " + this.summary;
 		// calculate the polarity
 		this.polarity = Main.polarityCalculator.getParagraphScore(text);
 		
@@ -395,6 +405,35 @@ public class Review {
 		reviewTextFOG + "," + summaryFOG + "," + reviewTextFK + "," + 
 		summaryFK + "," + reviewTextARI + "," + summaryARI + "," + 
 		reviewTextCLI + "," + summaryCLI + "," + polarity + "," + deviation + ");";
+		
+		return insertIntoText + valueText;	
+	}
+	
+	/**
+	 * Method to form the SQL statement to insert the metrics score into database.
+	 * @return SQL statement
+	 */
+	public String getInsertIntoReviewData1110MetricsScore(){
+		String insertIntoText = "INSERT INTO [AmazonReviewData].[dbo].[ReviewData1110MetricsScore] ([asin],[reviewerID],[reviewDate],[rating],[nbHelpful],[nbVotes],[helpfulness],[reviewTextLength],[summaryLength],[reviewTextSpellingErrorRatio],[summarySpellingErrorRatio],[spellingErrRatio],[reviewTextFOG],[summaryFOG],[reviewTextFK],[summaryFK],[reviewTextARI],[summaryARI],[reviewTextCLI],[summaryCLI],[polarityReviewText],[polaritySummary],[polarity],[deviation])";
+		
+		// calculate the helpfulness ratio beforehand
+		double helpfulness = 0.0;
+		if(helpful[1] != 0 ){ 
+			helpfulness = (double) helpful[0] / (double) helpful[1];
+		} else {
+			helpfulness = 0.0;
+		}
+		
+		// form the SQL query
+		String valueText = "VALUES ('" + asin + "','" + reviewerID + "','" +
+		reviewDate + "'," + overall + "," + helpful[0] + "," + helpful[1] + "," +  
+		helpfulness + "," + reviewTextLength + "," + summaryLength + "," +
+		reviewTextSpellingErrorRatio + "," + summarySpellingErrorRatio + "," + spellingErrorRatio + "," + 
+		reviewTextFOG + "," + summaryFOG + "," + reviewTextFK + "," + 
+		summaryFK + "," + reviewTextARI + "," + summaryARI + "," + 
+		reviewTextCLI + "," + summaryCLI + "," + 
+		polarityReviewText + "," + polaritySummary + "," + polarity + "," + 
+		deviation + ");";
 		
 		return insertIntoText + valueText;	
 	}
