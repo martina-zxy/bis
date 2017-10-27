@@ -156,7 +156,7 @@ public class PolarityCalculator {
     	for (String s : sentences) {
     		double score = getSentenceScore(s);
     		
-    		if (score > 0) {
+    		if (score != 0) {
     			totalScore += score;
     			countSentiment++;
     		}
