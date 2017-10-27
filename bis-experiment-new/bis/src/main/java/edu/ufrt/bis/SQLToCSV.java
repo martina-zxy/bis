@@ -40,46 +40,67 @@ public class SQLToCSV {
 //			dbConn.setAutoCommit(false);
 			
 			Statement selectStatement = dbConn.createStatement();
-			for(int ii = 1; ii <= 25; ii++)
+			int index[] = {522801,29808,10971,3414,918};
+			
+			for(int ii = 0; ii < index.length; ii++)
 			{
-				for (int jj = 10; jj <= 15; jj += 5){
-					int minVotes = ii; // 1 to 25
-					int minNbReviews = jj;
+//				for (int jj = 10; jj <= 15; jj += 5){
+					//int minVotes = index[ii]; // 522,801 to 918
+//					int minNbReviews = jj;
+					
+					String minVotes = "";
+					
+					if(ii == 0)
+						minVotes = "";
+					else if(ii == 1)
+						minVotes = "29808";
+					else if(ii == 2)
+						minVotes = "10971";
+					else if(ii == 3)
+						minVotes = "3414";
+					else if(ii == 4)
+						minVotes = "918";
+					
+					System.out.println("printing minVotes: " + minVotes);
 					
 					// write arff header
-					String fileName = "review_metrics_score - minVotes " + minVotes 
-							+ " minNbReviews " + minNbReviews + ".arff";
+					String fileName = "review_metrics_score_new - minVotes " + minVotes  + ".arff";
+//							+ " minNbReviews " + minNbReviews + ".arff";
 					
 					File fout = new File(fileName);
 					FileOutputStream fos = new FileOutputStream(fout);
 				 
 					BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
 					
-					printARFFHeaderFull(bw);
+					printARFFHeader(bw);
 					
 					int counter = 1;
-		
-					// form the SQL query
-					String selectQuery = "select * from [AmazonReviewData].[dbo].[ReviewDataFiltered3050MetricsScore] as rr "; 
-					String whereQuery = "where rr.nbVotes> " + minVotes + " and reviewerID in (";
-					String subquerySelect = "select reviewerID from [AmazonReviewData].[dbo].[ReviewDataFiltered3050MetricsScore] as r ";
-					String subqueryWhere = "where r.nbvotes> " + minVotes + " group by reviewerid having count(*)>" + minNbReviews + ")";
 					
-					String fullQuery = selectQuery + whereQuery + subquerySelect + subqueryWhere;
+					// form the SQL query
+					String selectQuery = "select * from [AmazonReviewData].[dbo].[ReviewDataFiltered3050MetricsScoreNew" + minVotes + "]"; 
+					
+//					String whereQuery = "where rr.nbVotes> " + minVotes + " and reviewerID in (";
+//					String subquerySelect = "select reviewerID from [AmazonReviewData].[dbo].[ReviewDataFiltered3050MetricsScore] as r ";
+//					String subqueryWhere = "where r.nbvotes> " + minVotes + " group by reviewerid having count(*)>" + minNbReviews + ")";
+//					
+//					String fullQuery = selectQuery + whereQuery + subquerySelect + subqueryWhere;
 					
 					// obtain the data from SQL using the query
-					ResultSet rs = selectStatement.executeQuery(fullQuery);
+//					ResultSet rs = selectStatement.executeQuery(fullQuery);
+					ResultSet rs = selectStatement.executeQuery(selectQuery);
 					ReviewMetricsScore reviewMetricsScore = new ReviewMetricsScore();
 			
 					// iterate through the instances and write into CSV files.
 					while(rs.next()){
 						System.out.println(counter++);
 						reviewMetricsScore.parseFromSQL(rs);
-						bw.write(reviewMetricsScore.getCSVFull());
+						bw.write(reviewMetricsScore.getCSV());
 					}	
 					
 					bw.close();
-				}
+					
+					System.out.println("printing minVotes: " + minVotes + " success");
+//				}
 			}
 		} catch(Exception e){
 			
@@ -95,13 +116,15 @@ public class SQLToCSV {
 	private static void printARFFHeader(BufferedWriter bw) throws IOException{
 		bw.write("@RELATION review_metrics_score\n\n");
 		bw.write("@ATTRIBUTE rating REAL\n");
-		bw.write("@ATTRIBUTE rating_squared REAL\n");
-		bw.write("@ATTRIBUTE nbHelpful REAL\n");
-		bw.write("@ATTRIBUTE nbVotes REAL\n");
+//		bw.write("@ATTRIBUTE rating_squared REAL\n");
+//		bw.write("@ATTRIBUTE nbHelpful REAL\n");
+//		bw.write("@ATTRIBUTE nbVotes REAL\n");
 		bw.write("@ATTRIBUTE helpfulness REAL\n");
 		bw.write("@ATTRIBUTE reviewTextLength REAL\n");
 		bw.write("@ATTRIBUTE summaryLength REAL\n");
-		bw.write("@ATTRIBUTE spellingErrRatio REAL\n");
+		bw.write("@ATTRIBUTE reviewTextSpellingErrRatio REAL\n");
+		bw.write("@ATTRIBUTE summarySpellingErrRatio REAL\n");
+//		bw.write("@ATTRIBUTE spellingErrRatio REAL\n");
 		bw.write("@ATTRIBUTE reviewTextFOG REAL\n");
 		bw.write("@ATTRIBUTE summaryFOG REAL\n");
 		bw.write("@ATTRIBUTE reviewTextFK REAL\n");
@@ -110,7 +133,9 @@ public class SQLToCSV {
 		bw.write("@ATTRIBUTE summaryARI REAL\n");
 		bw.write("@ATTRIBUTE reviewTextCLI REAL\n");
 		bw.write("@ATTRIBUTE summaryCLI REAL\n");
-		bw.write("@ATTRIBUTE polarity REAL\n");
+		bw.write("@ATTRIBUTE polarityReviewText REAL\n");
+		bw.write("@ATTRIBUTE polaritySummary REAL\n");
+//		bw.write("@ATTRIBUTE polarity REAL\n");
 		bw.write("@ATTRIBUTE deviation REAL\n\n");
 		bw.write("@DATA\n");
 	}
@@ -133,6 +158,8 @@ public class SQLToCSV {
 		bw.write("@ATTRIBUTE helpfulness REAL\n");
 		bw.write("@ATTRIBUTE reviewTextLength REAL\n");
 		bw.write("@ATTRIBUTE summaryLength REAL\n");
+		bw.write("@ATTRIBUTE reviewTextSpellingErrRatio REAL\n");
+		bw.write("@ATTRIBUTE summarySpellingErrRatio REAL\n");
 		bw.write("@ATTRIBUTE spellingErrRatio REAL\n");
 		bw.write("@ATTRIBUTE reviewTextFOG REAL\n");
 		bw.write("@ATTRIBUTE summaryFOG REAL\n");
@@ -142,6 +169,8 @@ public class SQLToCSV {
 		bw.write("@ATTRIBUTE summaryARI REAL\n");
 		bw.write("@ATTRIBUTE reviewTextCLI REAL\n");
 		bw.write("@ATTRIBUTE summaryCLI REAL\n");
+		bw.write("@ATTRIBUTE polarityReviewText REAL\n");
+		bw.write("@ATTRIBUTE polaritySummary REAL\n");
 		bw.write("@ATTRIBUTE polarity REAL\n");
 		bw.write("@ATTRIBUTE deviation REAL\n\n");
 		bw.write("@DATA\n");

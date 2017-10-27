@@ -466,4 +466,33 @@ public class Review {
 		
 		return insertIntoText + valueText;	
 	}
+	
+	/**
+	 * Method to form the SQL statement to insert the metrics score into database.
+	 * @return SQL statement
+	 */
+	public String getInsertIntoReviewData3050MetricsScoreNew(){
+		String insertIntoText = "INSERT INTO [AmazonReviewData].[dbo].[ReviewDataFiltered3050MetricsScoreNew] ([asin],[reviewerID],[reviewDate],[rating],[nbHelpful],[nbVotes],[helpfulness],[reviewTextLength],[summaryLength],[reviewTextSpellingErrorRatio],[summarySpellingErrorRatio],[spellingErrRatio],[reviewTextFOG],[summaryFOG],[reviewTextFK],[summaryFK],[reviewTextARI],[summaryARI],[reviewTextCLI],[summaryCLI],[polarityReviewText],[polaritySummary],[polarity],[deviation])";
+		
+		// calculate the helpfulness ratio beforehand
+		double helpfulness = 0.0;
+		if(helpful[1] != 0 ){ 
+			helpfulness = (double) helpful[0] / (double) helpful[1];
+		} else {
+			helpfulness = 0.0;
+		}
+		
+		// form the SQL query
+		String valueText = "VALUES ('" + asin + "','" + reviewerID + "','" +
+		reviewDate + "'," + overall + "," + helpful[0] + "," + helpful[1] + "," +  
+		helpfulness + "," + reviewTextLength + "," + summaryLength + "," +
+		reviewTextSpellingErrorRatio + "," + summarySpellingErrorRatio + "," + spellingErrorRatio + "," + 
+		reviewTextFOG + "," + summaryFOG + "," + reviewTextFK + "," + 
+		summaryFK + "," + reviewTextARI + "," + summaryARI + "," + 
+		reviewTextCLI + "," + summaryCLI + "," + 
+		polarityReviewText + "," + polaritySummary + "," + polarity + "," + 
+		deviation + ");";
+		
+		return insertIntoText + valueText;	
+	}
 }

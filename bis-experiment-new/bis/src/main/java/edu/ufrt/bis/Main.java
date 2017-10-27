@@ -61,7 +61,7 @@ public class Main {
 			
 			int offset = 0;
 			int fetch = 1000;
-			int maxRow = 7899;
+			int maxRow = 522801;
 			
 			int counter = 1;
 			
@@ -71,7 +71,7 @@ public class Main {
 					fetch = maxRow - offset;
 				}
 				// get the Review from the database
-				String selectQuery = "select * from [AmazonReviewData].[dbo].[ReviewData2410] " + 
+				String selectQuery = "select * from [AmazonReviewData].[dbo].[ReviewDataFiltered3050] " + 
 						"order by asin asc, reviewerID asc, unixReviewTime asc " + 
 						"offset " + offset + " rows fetch next " + fetch + " rows only";
 				String insertQuery = "";
@@ -87,8 +87,8 @@ public class Main {
 					review.calculateMetrics();
 //					System.out.println("After: ");
 //					System.out.println(review.toString());
-					insertQuery = review.getInsertIntoReviewData2410MetricsScore();
-	//				System.out.println("insertQuery: " + insertQuery);
+					insertQuery = review.getInsertIntoReviewData3050MetricsScoreNew();
+//					System.out.println("insertQuery: " + insertQuery);
 					insertStatement.execute(insertQuery);
 				}
 				offset += fetch;
