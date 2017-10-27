@@ -54,6 +54,7 @@ public class Main {
 			
 			Statement selectStatement = dbConn.createStatement();
 			Statement insertStatement = dbConn.createStatement();
+			Statement updateStatement = dbConn.createStatement();
 			
 			// due to the high number of data, pagination of processing the data is needed.
 			// to paginate, the database should be ordered
@@ -61,7 +62,7 @@ public class Main {
 			
 			int offset = 0;
 			int fetch = 1000;
-			int maxRow = 522801;
+			int maxRow = 7899;
 			
 			int counter = 1;
 			
@@ -71,7 +72,7 @@ public class Main {
 					fetch = maxRow - offset;
 				}
 				// get the Review from the database
-				String selectQuery = "select * from [AmazonReviewData].[dbo].[ReviewDataFiltered3050] " + 
+				String selectQuery = "select * from [AmazonReviewData].[dbo].[ReviewData1110] " + 
 						"order by asin asc, reviewerID asc, unixReviewTime asc " + 
 						"offset " + offset + " rows fetch next " + fetch + " rows only";
 				String insertQuery = "";
@@ -87,9 +88,14 @@ public class Main {
 					review.calculateMetrics();
 //					System.out.println("After: ");
 //					System.out.println(review.toString());
-					insertQuery = review.getInsertIntoReviewData3050MetricsScoreNew();
+//					insertQuery = review.getInsertIntoReviewData3050MetricsScoreNew();
 //					System.out.println("insertQuery: " + insertQuery);
-					insertStatement.execute(insertQuery);
+//					insertStatement.execute(insertQuery);
+					
+					String updatePolarityQuery = review.getUpdatePolarityReviewData3050MetricsScoreNew();
+					System.out.println(updatePolarityQuery);
+					updateStatement.execute(updatePolarityQuery);
+					
 				}
 				offset += fetch;
 			}

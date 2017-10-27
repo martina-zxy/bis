@@ -495,4 +495,19 @@ public class Review {
 		
 		return insertIntoText + valueText;	
 	}
+	
+	public String getUpdatePolarityReviewData3050MetricsScoreNew(){
+		String updatePolarityText;
+		updatePolarityText = "UPDATE [AmazonReviewData].[dbo].[ReviewData1110MetricsScore] " + 
+			"SET polarityReviewText = " + polarityReviewText + "," +
+				"polaritySummary = " + polaritySummary + "," +
+				"polarity = " + polarity +
+			" WHERE asin = '" + asin + "' AND " +
+				"reviewerID = '" + reviewerID + "' AND " +
+				"reviewDate = '" + reviewDate + "'";
+		
+		return updatePolarityText;
+		
+		
+	}
 }
